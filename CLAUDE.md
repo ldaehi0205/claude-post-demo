@@ -4,6 +4,7 @@
 
 - 목적: 간단한 게시판
 - 인증/인가: 없음
+- 좌측에 "게시판" 로고를 배치하고 우측에 GNB(홈, 게시글 목록, 글쓰기 메뉴)와 그 우측 끝에 로그아웃 버튼을 포함한다.
 
 ## 기술 스택
 
@@ -109,9 +110,9 @@ services:
 
 ```bash
 # Docker
-docker-compose up -d     # MySQL 컨테이너 실행
-docker-compose down      # 컨테이너 중지
-docker-compose logs -f   # 로그 확인
+docker compose up -d     # MySQL 컨테이너 실행
+docker compose down      # 컨테이너 중지
+docker compose logs -f   # 로그 확인
 
 # 개발
 npm run dev              # 개발 서버 (localhost:3000)
@@ -123,7 +124,7 @@ npx prisma studio        # DB GUI (localhost:5555)
 
 ```bash
 npm install              # 의존성 설치
-docker-compose up -d     # MySQL 실행
+docker compose up -d     # MySQL 실행
 npx prisma migrate dev   # DB 마이그레이션
 npm run dev              # 개발 서버 실행
 ```
