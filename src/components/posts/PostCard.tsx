@@ -1,8 +1,8 @@
-import Link from 'next/link'
-import { Post } from '@/types/post'
+import Link from 'next/link';
+import { Post } from '@/types/post';
 
 interface PostCardProps {
-  post: Post
+  post: Post;
 }
 
 export function PostCard({ post }: PostCardProps) {
@@ -14,9 +14,9 @@ export function PostCard({ post }: PostCardProps) {
         </h2>
         <p className="text-gray-600 line-clamp-2">{post.content}</p>
         <p className="text-sm text-gray-400 mt-2">
-          {new Date(post.createdAt).toLocaleDateString()}
+          {post.author.name} / {new Date(post.createdAt).toLocaleDateString()}
         </p>
       </div>
     </Link>
-  )
+  );
 }

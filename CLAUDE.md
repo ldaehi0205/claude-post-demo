@@ -4,7 +4,9 @@
 
 - 목적: 간단한 게시판
 - 인증/인가: 없음
-- 좌측에 "게시판" 로고를 배치하고 우측에 GNB(홈, 게시글 목록, 글쓰기 메뉴)와 그 우측 끝에 로그아웃 버튼을 포함한다.
+- 좌측에 "게시판" 로고를 배치하고 우측에 GNB(홈, 게시글 목록, 글쓰기 메뉴)와 그 우측 끝에 로그아웃/로그아웃 버튼을 포함하며 인증상태에 따라 동적으로 표시한다.
+- 초기화면은 `/posts` 로 라우팅되지만 게시글 작성권한은 로그인 사용자만 로그인 가능하다. 인증된 사용자가 아닌 경우 게시글 작성 페이지 접근하려는 경우 `/login` 리다이렉트
+- 게시글 수정/삭제는 작성자 본인만 가능
 
 ## 기술 스택
 
@@ -14,6 +16,7 @@
 - ORM: Prisma
 - DB: MySQL
 - API 통신: Axios, TanStack Query
+- 인증: JWT (jsonwebtoken), bcrypt
 
 ## 폴더 구조
 
@@ -67,6 +70,14 @@ post-root/
 - DB 접근: `data/prisma.ts` 통해서만
 - 유틸 함수: `utils/`
 
+### 인증 API
+
+| Method | URL                | 설명              | 인증 필요 |
+| ------ | ------------------ | ----------------- | --------- |
+| POST   | /api/auth/register | 회원가입          | X         |
+| POST   | /api/auth/login    | 로그인 (JWT 발급) | X         |
+| GET    | /api/auth/me       | 현재 사용자 정보  | O         |
+
 ## API 엔드포인트
 
 | Method | URL            | 설명      |
@@ -77,10 +88,20 @@ post-root/
 | PUT    | /api/posts/:id | 수정      |
 | DELETE | /api/posts/:id | 삭제      |
 
+## 인증 흐름
+
+1. **회원가입**: 비밀번호를 bcrypt로 해싱하여 DB 저장
+2. **로그인**: 이메일/비밀번호 확인 후 JWT 토큰 발급
+3. **토큰 저장**: 클라이언트는 localStorage에 토큰 저장 (key:`accessToken`)
+4. **API 요청**: Axios interceptor가 모든 요청에 `Authorization: Bearer {token}` 헤더 자동 추가
+5. **토큰 검증**: 서버는 미들웨어에서 JWT 검증 후 요청 처리
+6. **로그아웃**: localStorage에서 토큰 삭제
+
 ## 컴포넌트 규칙
 
 - 서버 컴포넌트: 기본 (DB 조회 등)
 - 클라이언트 컴포넌트: useState, onClick 등 필요할 때만 "use client"
+- 인증 상태는 useAuth 훅으로 관리
 
 ## 금지 사항
 

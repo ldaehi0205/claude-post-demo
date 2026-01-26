@@ -1,21 +1,58 @@
-import { NextResponse } from 'next/server'
-import { prisma } from '@/data/prisma'
-import { CreatePostInput } from '@/types/post'
+import { NextResponse } from 'next/server';
+import { prisma } from '@/data/prisma';
+import { verifyToken, getTokenFromHeader } from '@/utils/jwt';
+import { CreatePostInput } from '@/types/post';
 
 export async function GET() {
   const posts = await prisma.post.findMany({
     orderBy: { createdAt: 'desc' },
-  })
-  return NextResponse.json(posts)
+    include: {
+      author: {
+        select: {
+          id: true,
+          name: true,
+          userID: true,
+        },
+      },
+    },
+  });
+  return NextResponse.json(posts);
 }
 
 export async function POST(request: Request) {
-  const body: CreatePostInput = await request.json()
+  const authHeader = request.headers.get('Authorization');
+  const token = getTokenFromHeader(authHeader);
+
+  if (!token) {
+    return NextResponse.json({ error: '인증이 필요합니다.' }, { status: 401 });
+  }
+
+  const payload = verifyToken(token);
+
+  if (!payload) {
+    return NextResponse.json(
+      { error: '유효하지 않은 토큰입니다.' },
+      { status: 401 },
+    );
+  }
+
+  const body: CreatePostInput = await request.json();
   const post = await prisma.post.create({
     data: {
       title: body.title,
       content: body.content,
+      authorId: payload.userId,
     },
-  })
-  return NextResponse.json(post, { status: 201 })
+    include: {
+      author: {
+        select: {
+          id: true,
+          name: true,
+          userID: true,
+        },
+      },
+    },
+  });
+
+  return NextResponse.json(post, { status: 201 });
 }

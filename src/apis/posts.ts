@@ -1,9 +1,5 @@
-import axios from 'axios';
+import { api } from './client';
 import { Post, CreatePostInput, UpdatePostInput } from '@/types/post';
-
-const api = axios.create({
-  baseURL: '/api',
-});
 
 export const postsApi = {
   getAll: async (): Promise<Post[]> => {
