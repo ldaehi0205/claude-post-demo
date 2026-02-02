@@ -1,32 +1,29 @@
 'use client';
 
-import { usePosts } from '@/hooks/usePosts';
+import { prisma } from '@/data/prisma';
 import { PostCard } from './PostCard';
-import { useAuth } from '@/hooks/useAuth';
+import { postsApi } from '@/apis/posts';
+import DeleteButton from './DeleteButton';
+import { useState } from 'react';
 
-export function PostList() {
-  const { data: posts, isLoading, error } = usePosts();
+export function PostList({ posts }: any) {
+  const [ids, setIds] = useState<number[]>([]);
 
-  if (isLoading) {
-    return <div className="text-center py-8">로딩 중...</div>;
-  }
-
-  if (error) {
-    return (
-      <div className="text-center py-8 text-red-500">에러가 발생했습니다.</div>
+  const selectPost = (id: number) => {
+    setIds(prev =>
+      prev.includes(id) ? prev.filter(v => v !== id) : [...prev, id],
     );
-  }
+  };
 
-  if (!posts || posts.length === 0) {
-    return (
-      <div className="text-center py-8 text-gray-500">게시글이 없습니다.</div>
-    );
-  }
+  const clearSelectPost = () => setIds([]);
 
   return (
-    <div className="grid gap-4">
-      {posts.map(post => (
-        <PostCard key={post.id} post={post} />
+    <div className="flex flex-col gap-4">
+      <div className="self-end">
+        <DeleteButton ids={ids} clearSelectPost={clearSelectPost} />
+      </div>
+      {posts.map((post: any) => (
+        <PostCard key={post.id} post={post} ids={ids} selectPost={selectPost} />
       ))}
     </div>
   );

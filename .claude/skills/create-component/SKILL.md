@@ -15,11 +15,11 @@ argument-hint: [component-name] [type: ui|layout|posts]
 
 ## 파일 위치
 
-| 타입 | 경로 |
-|------|------|
-| ui | `src/components/ui/$0.tsx` |
+| 타입   | 경로                           |
+| ------ | ------------------------------ |
+| ui     | `src/components/ui/$0.tsx`     |
 | layout | `src/components/layout/$0.tsx` |
-| posts | `src/components/posts/$0.tsx` |
+| posts  | `src/components/posts/$0.tsx`  |
 
 ## 컴포넌트 규칙
 
@@ -27,7 +27,7 @@ argument-hint: [component-name] [type: ui|layout|posts]
 - Props 인터페이스 정의
 - Tailwind CSS로 스타일링
 - `any` 타입 금지
-- UI 컴포넌트는 비즈니스 로직 금지
+- `/posts` 는 서버 컴포넌트로 작성한다.
 
 ## 클라이언트 컴포넌트 템플릿
 

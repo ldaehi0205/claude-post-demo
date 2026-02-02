@@ -1,11 +1,16 @@
-import Link from 'next/link';
 import { PostList } from '@/components/posts/PostList';
-import { Button } from '@/components/ui/Button';
+import { prisma } from '@/data/prisma';
 
-export default function PostsPage() {
+export default async function PostsPage() {
+  // const posts = await postsApi.getAll();
+  const posts = await prisma.post.findMany({
+    include: { author: true },
+    orderBy: { createdAt: 'desc' },
+  });
+
   return (
     <div>
-      <PostList />
+      <PostList posts={posts} />
     </div>
   );
 }

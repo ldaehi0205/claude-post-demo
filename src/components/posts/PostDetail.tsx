@@ -22,12 +22,16 @@ export function PostDetail({ id }: PostDetailProps) {
   }
 
   if (error || !post) {
-    return <div className="text-center py-8 text-red-500">게시글을 찾을 수 없습니다.</div>;
+    return (
+      <div className="text-center py-8 text-red-500">
+        게시글을 찾을 수 없습니다.
+      </div>
+    );
   }
 
   const handleDelete = async () => {
     if (confirm('정말 삭제하시겠습니까?')) {
-      await deletePost.mutateAsync(id);
+      await deletePost.mutateAsync([id]);
       router.push('/posts');
     }
   };
