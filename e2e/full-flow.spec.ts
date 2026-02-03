@@ -180,8 +180,56 @@ test.describe('전체 흐름 E2E 테스트', () => {
       // 목록 페이지로 이동 확인
       await page.waitForURL(/\/posts$/, { timeout: 5000 });
 
+      // 페이지 리로드하여 캐시 갱신
+      await page.reload();
+
       // 삭제된 게시글이 목록에 없는지 확인
       await expect(page.getByText(title)).not.toBeVisible({ timeout: 3000 });
+    });
+
+    test('게시글 다중 삭제', async ({ page }) => {
+      const timestamp = Date.now();
+      const title1 = `다중삭제 테스트1 ${timestamp}`;
+      const title2 = `다중삭제 테스트2 ${timestamp}`;
+
+      // 첫 번째 게시글 작성
+      await page.goto('/posts/new');
+      await fillInputByLabel(page, '제목', title1);
+      await fillTextareaByLabel(page, '내용', '다중 삭제 테스트용 게시글 1');
+      await page.getByRole('button', { name: '작성' }).click();
+      await page.waitForURL(/\/posts$/, { timeout: 5000 });
+
+      // 두 번째 게시글 작성
+      await page.goto('/posts/new');
+      await fillInputByLabel(page, '제목', title2);
+      await fillTextareaByLabel(page, '내용', '다중 삭제 테스트용 게시글 2');
+      await page.getByRole('button', { name: '작성' }).click();
+      await page.waitForURL(/\/posts$/, { timeout: 5000 });
+
+      // 게시글 목록에서 두 게시글 확인
+      await expect(page.getByText(title1)).toBeVisible({ timeout: 3000 });
+      await expect(page.getByText(title2)).toBeVisible({ timeout: 3000 });
+
+      // 체크박스 선택 (두 게시글 모두)
+      // 구조: div.flex > input[checkbox] + Link > div > h2(title)
+      const card1 = page.locator('h2', { hasText: title1 }).locator('..').locator('..').locator('..');
+      const card2 = page.locator('h2', { hasText: title2 }).locator('..').locator('..').locator('..');
+
+      await card1.locator('input[type="checkbox"]').check();
+      await card2.locator('input[type="checkbox"]').check();
+
+      // 다이얼로그 핸들러 설정
+      page.on('dialog', dialog => dialog.accept());
+
+      // 삭제 버튼 클릭
+      await page.getByRole('button', { name: '삭제' }).click();
+
+      // 페이지 새로고침 대기
+      await page.waitForTimeout(1000);
+
+      // 삭제된 게시글이 목록에 없는지 확인
+      await expect(page.getByText(title1)).not.toBeVisible({ timeout: 3000 });
+      await expect(page.getByText(title2)).not.toBeVisible({ timeout: 3000 });
     });
   });
 });

@@ -32,6 +32,7 @@ export function PostDetail({ id }: PostDetailProps) {
   const handleDelete = async () => {
     if (confirm('정말 삭제하시겠습니까?')) {
       await deletePost.mutateAsync([id]);
+      router.refresh();
       router.push('/posts');
     }
   };

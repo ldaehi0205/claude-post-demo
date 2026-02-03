@@ -1,7 +1,7 @@
 ---
 name: create-component
 description: Next.js 14 TypeScript 함수형 컴포넌트를 생성합니다. 게시판의 UI 컴포넌트, 레이아웃 컴포넌트, 게시판 컴포넌트를 만들 때 사용합니다.
-argument-hint: [component-name] [type: ui|layout|posts]
+argument-hint: '[component-name] [type: ui|layout|posts]'
 ---
 
 # Next.js 14 컴포넌트 생성
