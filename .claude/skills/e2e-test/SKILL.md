@@ -1,7 +1,7 @@
 ---
 name: e2e-test
 description: Playwright MCP를 사용해 브라우저 E2E 테스트를 실행합니다. 로그인, 게시글 CRUD, UI 확인 등 전체 흐름을 테스트할 때 사용합니다.
-argument-hint: [test-scenario]
+argument-hint: "[test-scenario]"
 ---
 
 # E2E 테스트 (Playwright MCP)

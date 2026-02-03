@@ -1,7 +1,7 @@
 ---
 name: api-test
 description: REST API 엔드포인트를 테스트합니다. 게시글 CRUD, 인증 API 테스트 시 사용합니다.
-argument-hint: [method] [endpoint]
+argument-hint: "[method] [endpoint]"
 ---
 
 # API 테스트
