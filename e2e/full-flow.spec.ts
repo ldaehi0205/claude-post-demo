@@ -236,13 +236,18 @@ test.describe('전체 흐름 E2E 테스트', () => {
   });
 
   test.describe('5. 댓글 CRUD 테스트', () => {
-    test.beforeEach(async ({ page }) => {
-      // 로그인
-      await page.goto('/login');
-      await fillInputByLabel(page, '아이디', TEST_USER.userID);
-      await fillInputByLabel(page, '비밀번호', TEST_USER.password);
-      await page.getByRole('button', { name: '로그인' }).click();
-      await page.waitForURL(/\/(posts)?$/, { timeout: 5000 });
+    test.beforeEach(async ({ page, request }) => {
+      // API로 직접 로그인
+      const response = await request.post('http://localhost:3000/api/auth/login', {
+        data: { userID: TEST_USER.userID, password: TEST_USER.password },
+      });
+      const { accessToken } = await response.json();
+
+      // localStorage에 토큰 저장
+      await page.goto('/');
+      await page.evaluate((token) => {
+        localStorage.setItem('accessToken', token);
+      }, accessToken);
     });
 
     test('비로그인 상태에서 댓글 목록 조회 가능, 작성 폼 미표시', async ({ page }) => {
