@@ -8,14 +8,14 @@ const TEST_USER = {
 
 // label 텍스트로 input 찾기 헬퍼 함수
 async function fillInputByLabel(page: Page, labelText: string, value: string) {
-  const label = page.locator(`text=${labelText}`).first();
+  const label = page.locator('label', { hasText: labelText }).first();
   const container = label.locator('..');
   const input = container.locator('input');
   await input.fill(value);
 }
 
 async function fillTextareaByLabel(page: Page, labelText: string, value: string) {
-  const label = page.locator(`text=${labelText}`).first();
+  const label = page.locator('label', { hasText: labelText }).first();
   const container = label.locator('..');
   const textarea = container.locator('textarea');
   await textarea.fill(value);
