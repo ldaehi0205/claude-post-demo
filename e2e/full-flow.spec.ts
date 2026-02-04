@@ -232,4 +232,147 @@ test.describe('전체 흐름 E2E 테스트', () => {
       await expect(page.getByText(title2)).not.toBeVisible({ timeout: 3000 });
     });
   });
+
+  test.describe('5. 댓글 CRUD 테스트', () => {
+    let postUrl: string;
+
+    test.beforeEach(async ({ page }) => {
+      // 로그인
+      await page.goto('/login');
+      await fillInputByLabel(page, '아이디', TEST_USER.userID);
+      await fillInputByLabel(page, '비밀번호', TEST_USER.password);
+      await page.getByRole('button', { name: '로그인' }).click();
+      await page.waitForURL(/\/(posts)?$/, { timeout: 5000 });
+    });
+
+    test('비로그인 상태에서 댓글 목록 조회 가능, 작성 폼 미표시', async ({ page }) => {
+      // 로그아웃
+      await page.evaluate(() => localStorage.removeItem('accessToken'));
+
+      // 게시글 상세 페이지 접근
+      await page.goto('/posts');
+      const firstPost = page.locator('a[href^="/posts/"]').first();
+      if (await firstPost.isVisible()) {
+        await firstPost.click();
+        await page.waitForURL(/\/posts\/\d+/, { timeout: 5000 });
+      }
+
+      // 댓글 섹션 확인
+      await expect(page.getByText('댓글')).toBeVisible({ timeout: 3000 });
+
+      // 댓글 작성 폼(textarea)이 없어야 함
+      await expect(page.locator('textarea[placeholder="댓글을 작성하세요"]')).not.toBeVisible();
+    });
+
+    test('로그인 상태에서 댓글 작성', async ({ page }) => {
+      // 새 게시글 작성
+      await page.goto('/posts/new');
+      const title = `댓글 테스트용 게시글 ${Date.now()}`;
+      await fillInputByLabel(page, '제목', title);
+      await fillTextareaByLabel(page, '내용', '댓글 테스트용 게시글입니다.');
+      await page.getByRole('button', { name: '작성' }).click();
+      await page.waitForURL(/\/posts$/, { timeout: 5000 });
+
+      // 작성한 게시글 상세 페이지로 이동
+      await page.getByText(title).click();
+      await page.waitForURL(/\/posts\/\d+/, { timeout: 5000 });
+      postUrl = page.url();
+
+      // 댓글 작성 폼 확인
+      await expect(page.locator('textarea[placeholder="댓글을 작성하세요"]')).toBeVisible({ timeout: 3000 });
+
+      // 댓글 작성
+      const commentContent = `테스트 댓글 ${Date.now()}`;
+      await page.locator('textarea[placeholder="댓글을 작성하세요"]').fill(commentContent);
+      await page.getByRole('button', { name: '댓글 등록' }).click();
+
+      // 댓글이 목록에 표시되는지 확인
+      await expect(page.getByText(commentContent)).toBeVisible({ timeout: 5000 });
+
+      // 작성자 이름 표시 확인
+      await expect(page.getByText(TEST_USER.name)).toBeVisible();
+    });
+
+    test('본인 댓글 수정', async ({ page }) => {
+      // 게시글 작성 및 댓글 작성
+      await page.goto('/posts/new');
+      const title = `댓글 수정 테스트 ${Date.now()}`;
+      await fillInputByLabel(page, '제목', title);
+      await fillTextareaByLabel(page, '내용', '댓글 수정 테스트용');
+      await page.getByRole('button', { name: '작성' }).click();
+      await page.waitForURL(/\/posts$/, { timeout: 5000 });
+
+      await page.getByText(title).click();
+      await page.waitForURL(/\/posts\/\d+/, { timeout: 5000 });
+
+      const originalComment = `원본 댓글 ${Date.now()}`;
+      await page.locator('textarea[placeholder="댓글을 작성하세요"]').fill(originalComment);
+      await page.getByRole('button', { name: '댓글 등록' }).click();
+      await expect(page.getByText(originalComment)).toBeVisible({ timeout: 5000 });
+
+      // 수정 버튼 클릭
+      const commentItem = page.locator('li').filter({ hasText: originalComment });
+      await commentItem.getByText('수정').click();
+
+      // 수정 textarea에 새 내용 입력
+      const editedComment = `수정된 댓글 ${Date.now()}`;
+      await commentItem.locator('textarea').fill(editedComment);
+      await commentItem.getByRole('button', { name: '저장' }).click();
+
+      // 수정된 댓글 확인
+      await expect(page.getByText(editedComment)).toBeVisible({ timeout: 5000 });
+      await expect(page.getByText(originalComment)).not.toBeVisible();
+    });
+
+    test('본인 댓글 삭제', async ({ page }) => {
+      // 게시글 작성 및 댓글 작성
+      await page.goto('/posts/new');
+      const title = `댓글 삭제 테스트 ${Date.now()}`;
+      await fillInputByLabel(page, '제목', title);
+      await fillTextareaByLabel(page, '내용', '댓글 삭제 테스트용');
+      await page.getByRole('button', { name: '작성' }).click();
+      await page.waitForURL(/\/posts$/, { timeout: 5000 });
+
+      await page.getByText(title).click();
+      await page.waitForURL(/\/posts\/\d+/, { timeout: 5000 });
+
+      const commentToDelete = `삭제할 댓글 ${Date.now()}`;
+      await page.locator('textarea[placeholder="댓글을 작성하세요"]').fill(commentToDelete);
+      await page.getByRole('button', { name: '댓글 등록' }).click();
+      await expect(page.getByText(commentToDelete)).toBeVisible({ timeout: 5000 });
+
+      // 다이얼로그 핸들러 설정
+      page.on('dialog', dialog => dialog.accept());
+
+      // 삭제 버튼 클릭
+      const commentItem = page.locator('li').filter({ hasText: commentToDelete });
+      await commentItem.getByText('삭제').click();
+
+      // 삭제 확인
+      await expect(page.getByText(commentToDelete)).not.toBeVisible({ timeout: 5000 });
+    });
+
+    test('타인 댓글에 수정/삭제 버튼 미표시', async ({ page }) => {
+      // 게시글 상세 페이지 접근
+      await page.goto('/posts');
+      const firstPost = page.locator('a[href^="/posts/"]').first();
+      if (await firstPost.isVisible()) {
+        await firstPost.click();
+        await page.waitForURL(/\/posts\/\d+/, { timeout: 5000 });
+      }
+
+      // 댓글이 있는 경우, 타인의 댓글에는 수정/삭제 버튼이 없어야 함
+      // (이 테스트는 다른 사용자의 댓글이 있을 때만 의미가 있음)
+      const otherUserComments = page.locator('li').filter({
+        hasNot: page.locator(`text=${TEST_USER.name}`),
+      });
+
+      const count = await otherUserComments.count();
+      if (count > 0) {
+        const firstOtherComment = otherUserComments.first();
+        await expect(firstOtherComment.getByText('수정')).not.toBeVisible();
+        await expect(firstOtherComment.getByText('삭제')).not.toBeVisible();
+      }
+    });
+  });
 });
