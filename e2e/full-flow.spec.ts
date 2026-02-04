@@ -274,7 +274,6 @@ test.describe('전체 흐름 E2E 테스트', () => {
       // 작성한 게시글 상세 페이지로 이동
       await page.getByText(title).click();
       await page.waitForURL(/\/posts\/\d+/, { timeout: 5000 });
-      postUrl = page.url();
 
       // 댓글 작성 폼 확인
       await expect(page.locator('textarea[placeholder="댓글을 작성하세요"]')).toBeVisible({ timeout: 3000 });
