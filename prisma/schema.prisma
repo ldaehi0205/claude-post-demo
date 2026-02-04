@@ -16,6 +16,7 @@ model User {
   createdAt     DateTime       @default(now())
   posts         Post[]
   refreshTokens RefreshToken[]
+  comments      Comment[]
 }
 
 model Post {
