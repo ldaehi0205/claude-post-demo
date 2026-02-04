@@ -5,6 +5,11 @@ test('debug full login flow', async ({ page }) => {
   page.on('console', msg => console.log('Browser console:', msg.type(), msg.text()));
   page.on('pageerror', err => console.log('Browser error:', err.message));
 
+  // 네트워크 요청 실패 로그
+  page.on('requestfailed', request => {
+    console.log('Request failed:', request.url(), request.failure()?.errorText);
+  });
+
   // 페이지 로드 대기 (networkidle로 JavaScript 로드 완료 대기)
   await page.goto('/login', { waitUntil: 'networkidle' });
 
