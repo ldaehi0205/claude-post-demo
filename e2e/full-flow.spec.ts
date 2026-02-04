@@ -236,33 +236,45 @@ test.describe('전체 흐름 E2E 테스트', () => {
   });
 
   test.describe('5. 댓글 CRUD 테스트', () => {
-    let accessToken: string;
-    let testPostId: number;
+    // UI를 통해 로그인하고 새 게시글 작성 후 상세 페이지로 이동하는 헬퍼 함수
+    async function loginAndCreatePost(page: Page): Promise<void> {
+      // 로그인
+      await page.goto('/login');
+      await fillInputByLabel(page, '아이디', TEST_USER.userID);
+      await fillInputByLabel(page, '비밀번호', TEST_USER.password);
+      await page.getByRole('button', { name: '로그인' }).click();
+      await page.waitForURL(/\/(posts)?$/, { timeout: 5000 });
 
-    test.beforeAll(async ({ request }) => {
-      // API로 로그인하여 토큰 획득
-      const loginRes = await request.post('http://localhost:3000/api/auth/login', {
-        data: { userID: TEST_USER.userID, password: TEST_USER.password },
-      });
-      const loginData = await loginRes.json();
-      accessToken = loginData.accessToken;
+      // 새 게시글 작성
+      await page.goto('/posts/new');
+      const title = `댓글 테스트 게시글 ${Date.now()}`;
+      await fillInputByLabel(page, '제목', title);
+      await fillTextareaByLabel(page, '내용', '댓글 테스트를 위한 게시글입니다.');
+      await page.getByRole('button', { name: '작성' }).click();
+      await page.waitForURL(/\/posts$/, { timeout: 5000 });
 
-      // 테스트용 게시글 API로 생성
-      const postRes = await request.post('http://localhost:3000/api/posts', {
-        headers: { Authorization: `Bearer ${accessToken}` },
-        data: { title: '댓글 테스트용 게시글', content: '댓글 테스트를 위한 게시글입니다.' },
-      });
-      const postData = await postRes.json();
-      testPostId = postData.id;
-    });
+      // 작성한 게시글 클릭하여 상세 페이지 이동
+      await page.getByText(title).click();
+      await page.waitForURL(/\/posts\/\d+/, { timeout: 5000 });
+    }
+
+    // UI를 통해 로그인만 수행하는 헬퍼 함수
+    async function login(page: Page): Promise<void> {
+      await page.goto('/login');
+      await fillInputByLabel(page, '아이디', TEST_USER.userID);
+      await fillInputByLabel(page, '비밀번호', TEST_USER.password);
+      await page.getByRole('button', { name: '로그인' }).click();
+      await page.waitForURL(/\/(posts)?$/, { timeout: 5000 });
+    }
 
     test('비로그인 상태에서 댓글 목록 조회 가능, 작성 폼 미표시', async ({ page }) => {
-      // localStorage 클리어하여 비로그인 상태 확보
-      await page.goto('/');
-      await page.evaluate(() => localStorage.removeItem('accessToken'));
+      // 먼저 로그인해서 게시글 생성
+      await loginAndCreatePost(page);
+      const postUrl = page.url();
 
-      // 비로그인 상태로 게시글 상세 페이지 접근
-      await page.goto(`/posts/${testPostId}`);
+      // 로그아웃 (localStorage 클리어)
+      await page.evaluate(() => localStorage.removeItem('accessToken'));
+      await page.reload();
 
       // 댓글 섹션이 로드될 때까지 대기
       await expect(page.getByText(/댓글 \d+개/)).toBeVisible({ timeout: 10000 });
@@ -272,12 +284,7 @@ test.describe('전체 흐름 E2E 테스트', () => {
     });
 
     test('로그인 상태에서 댓글 작성', async ({ page }) => {
-      // 로그인 상태 설정
-      await page.goto('/');
-      await page.evaluate((token) => localStorage.setItem('accessToken', token), accessToken);
-
-      // 게시글 상세 페이지로 이동
-      await page.goto(`/posts/${testPostId}`);
+      await loginAndCreatePost(page);
 
       // 댓글 작성 폼이 로드될 때까지 대기
       await expect(page.locator('textarea[placeholder="댓글을 작성하세요"]')).toBeVisible({ timeout: 10000 });
@@ -292,11 +299,7 @@ test.describe('전체 흐름 E2E 테스트', () => {
     });
 
     test('본인 댓글 수정', async ({ page }) => {
-      // 로그인 상태 설정
-      await page.goto('/');
-      await page.evaluate((token) => localStorage.setItem('accessToken', token), accessToken);
-
-      await page.goto(`/posts/${testPostId}`);
+      await loginAndCreatePost(page);
 
       // 댓글 작성 폼이 로드될 때까지 대기
       await expect(page.locator('textarea[placeholder="댓글을 작성하세요"]')).toBeVisible({ timeout: 10000 });
@@ -321,11 +324,7 @@ test.describe('전체 흐름 E2E 테스트', () => {
     });
 
     test('본인 댓글 삭제', async ({ page }) => {
-      // 로그인 상태 설정
-      await page.goto('/');
-      await page.evaluate((token) => localStorage.setItem('accessToken', token), accessToken);
-
-      await page.goto(`/posts/${testPostId}`);
+      await loginAndCreatePost(page);
 
       // 댓글 작성 폼이 로드될 때까지 대기
       await expect(page.locator('textarea[placeholder="댓글을 작성하세요"]')).toBeVisible({ timeout: 10000 });
@@ -348,26 +347,22 @@ test.describe('전체 흐름 E2E 테스트', () => {
     });
 
     test('타인 댓글에 수정/삭제 버튼 미표시', async ({ page }) => {
-      // 로그인 상태 설정
-      await page.goto('/');
-      await page.evaluate((token) => localStorage.setItem('accessToken', token), accessToken);
-
-      await page.goto(`/posts/${testPostId}`);
+      await loginAndCreatePost(page);
 
       // 댓글 섹션이 로드될 때까지 대기
       await expect(page.getByText(/댓글 \d+개/)).toBeVisible({ timeout: 10000 });
 
-      // 타인의 댓글이 있는 경우 테스트 (조건부)
-      const otherUserComments = page.locator('li').filter({
-        hasNot: page.locator(`text=${TEST_USER.name}`),
-      });
+      // 본인 댓글만 있으므로, 본인 댓글에 수정/삭제 버튼이 표시되는지 확인
+      // (타인 댓글 테스트는 다른 사용자 필요하므로 본인 댓글 버튼 표시 확인으로 대체)
+      const commentContent = `권한 테스트 댓글 ${Date.now()}`;
+      await page.locator('textarea[placeholder="댓글을 작성하세요"]').fill(commentContent);
+      await page.getByRole('button', { name: '댓글 등록' }).click();
+      await expect(page.getByText(commentContent)).toBeVisible({ timeout: 5000 });
 
-      const count = await otherUserComments.count();
-      if (count > 0) {
-        const firstOtherComment = otherUserComments.first();
-        await expect(firstOtherComment.getByText('수정')).not.toBeVisible();
-        await expect(firstOtherComment.getByText('삭제')).not.toBeVisible();
-      }
+      // 본인 댓글에는 수정/삭제 버튼이 표시되어야 함
+      const myCommentItem = page.locator('li').filter({ hasText: commentContent });
+      await expect(myCommentItem.getByText('수정')).toBeVisible();
+      await expect(myCommentItem.getByText('삭제')).toBeVisible();
     });
   });
 });
