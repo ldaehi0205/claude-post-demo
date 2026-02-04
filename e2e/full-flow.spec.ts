@@ -353,7 +353,9 @@ test.describe('전체 흐름 E2E 테스트', () => {
       await page.evaluate((token) => localStorage.setItem('accessToken', token), accessToken);
 
       await page.goto(`/posts/${testPostId}`);
-      await page.waitForLoadState('networkidle');
+
+      // 댓글 섹션이 로드될 때까지 대기
+      await expect(page.getByText(/댓글 \d+개/)).toBeVisible({ timeout: 10000 });
 
       // 타인의 댓글이 있는 경우 테스트 (조건부)
       const otherUserComments = page.locator('li').filter({
