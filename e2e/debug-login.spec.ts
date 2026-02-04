@@ -18,25 +18,32 @@ test('debug full login flow', async ({ page }) => {
   await page.screenshot({ path: '/tmp/debug-before-click.png' });
   console.log('Screenshot before click saved');
 
-  // 로그인 버튼 클릭
-  await page.getByRole('button', { name: '로그인' }).click();
-  console.log('Clicked login button');
+  // 로그인 버튼 클릭 (네트워크 요청 대기)
+  await Promise.all([
+    page.waitForResponse(response =>
+      response.url().includes('/api/auth/login') && response.status() === 200
+    ),
+    page.getByRole('button', { name: '로그인' }).click(),
+  ]);
+  console.log('Login API response received');
 
-  // 잠시 대기
-  await page.waitForTimeout(2000);
-
-  // 현재 URL 확인
-  console.log('Current URL:', page.url());
+  // 리다이렉트 대기
+  try {
+    await page.waitForURL(/\/(posts)?$/, { timeout: 5000 });
+    console.log('Redirected to:', page.url());
+  } catch (e) {
+    console.log('No redirect, current URL:', page.url());
+  }
 
   // 스크린샷 (버튼 클릭 후)
   await page.screenshot({ path: '/tmp/debug-after-click.png' });
   console.log('Screenshot after click saved');
 
-  // 에러 메시지 확인
-  const errorMsg = page.getByText('아이디 또는 비밀번호가 올바르지 않습니다');
-  if (await errorMsg.isVisible()) {
-    console.log('Login error message is visible');
+  // 로그아웃 버튼 확인
+  const logoutBtn = page.getByRole('button', { name: '로그아웃' });
+  if (await logoutBtn.isVisible()) {
+    console.log('Logout button is visible - login successful');
   } else {
-    console.log('No login error message');
+    console.log('Logout button not visible');
   }
 });
