@@ -8,11 +8,10 @@ const TEST_USER = {
 
 // label 텍스트로 input 찾기 헬퍼 함수
 async function fillInputByLabel(page: Page, labelText: string, value: string) {
-  // 아이디는 첫 번째 input, 비밀번호는 두 번째 input
   if (labelText === '아이디') {
-    await page.locator('input[type="text"]').first().fill(value);
+    await page.locator('input').first().fill(value);
   } else if (labelText === '비밀번호') {
-    await page.locator('input[type="password"]').first().fill(value);
+    await page.locator('input').nth(1).fill(value);
   } else if (labelText === '제목') {
     await page.locator('input').first().fill(value);
   } else if (labelText === '이름') {
