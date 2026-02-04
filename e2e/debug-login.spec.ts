@@ -1,6 +1,10 @@
 import { test, expect } from '@playwright/test';
 
 test('debug full login flow', async ({ page }) => {
+  // 브라우저 콘솔 로그 수집
+  page.on('console', msg => console.log('Browser console:', msg.type(), msg.text()));
+  page.on('pageerror', err => console.log('Browser error:', err.message));
+
   // 페이지 로드 대기 (networkidle로 JavaScript 로드 완료 대기)
   await page.goto('/login', { waitUntil: 'networkidle' });
 
