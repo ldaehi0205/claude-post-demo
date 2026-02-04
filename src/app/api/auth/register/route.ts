@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
 import { prisma } from '@/data/prisma';
-import { signToken } from '@/utils/jwt';
+import {
+  signToken,
+  generateRefreshToken,
+  getRefreshTokenExpiry,
+  REFRESH_TOKEN_ABSOLUTE_DAYS,
+} from '@/utils/jwt';
 import { RegisterInput } from '@/types/auth';
 
 export async function POST(request: Request) {
@@ -14,8 +19,8 @@ export async function POST(request: Request) {
 
   if (existingUser) {
     return NextResponse.json(
-      { error: '이미 사용 중인 아이디입니다.' },
-      { status: 400 }
+      { error: '이미 사용 중인 아이디입니다.', code: 'duplicate_user' },
+      { status: 400 },
     );
   }
 
@@ -37,5 +42,26 @@ export async function POST(request: Request) {
 
   const accessToken = signToken({ userId: user.id, userID: user.userID });
 
-  return NextResponse.json({ user, accessToken }, { status: 201 });
+  // Refresh Token 생성 및 저장
+  const refreshToken = generateRefreshToken();
+  await prisma.refreshToken.create({
+    data: {
+      token: refreshToken,
+      userId: user.id,
+      expiresAt: getRefreshTokenExpiry(),
+    },
+  });
+
+  const response = NextResponse.json({ user, accessToken }, { status: 201 });
+
+  // Refresh Token을 HttpOnly 쿠키로 설정
+  response.cookies.set('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: REFRESH_TOKEN_ABSOLUTE_DAYS * 24 * 60 * 60,
+    path: '/',
+  });
+
+  return response;
 }

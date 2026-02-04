@@ -1,12 +1,15 @@
 'use client';
 
-import { prisma } from '@/data/prisma';
-import { PostCard } from './PostCard';
-import { postsApi } from '@/apis/posts';
-import DeleteButton from './DeleteButton';
 import { useState } from 'react';
+import { Post } from '@/types/post';
+import { PostCard } from './PostCard';
+import DeleteButton from './DeleteButton';
 
-export function PostList({ posts }: any) {
+interface PostListProps {
+  posts: Post[];
+}
+
+export function PostList({ posts }: PostListProps) {
   const [ids, setIds] = useState<number[]>([]);
 
   const selectPost = (id: number) => {
@@ -22,7 +25,7 @@ export function PostList({ posts }: any) {
       <div className="self-end">
         <DeleteButton ids={ids} clearSelectPost={clearSelectPost} />
       </div>
-      {posts.map((post: any) => (
+      {posts.map((post) => (
         <PostCard key={post.id} post={post} ids={ids} selectPost={selectPost} />
       ))}
     </div>

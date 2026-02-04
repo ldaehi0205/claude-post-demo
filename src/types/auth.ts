@@ -24,4 +24,5 @@ export interface AuthResponse {
 export interface JwtPayload {
   userId: number;
   userID: string;
+  expired?: boolean;
 }

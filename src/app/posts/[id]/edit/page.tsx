@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { usePost } from '@/hooks/usePosts';
 import { useAuth } from '@/hooks/useAuth';
-import { PostForm } from '@/components/posts/PostForm';
+import { PostForm } from '../../_components/PostForm';
 
 interface Props {
   params: { id: string };

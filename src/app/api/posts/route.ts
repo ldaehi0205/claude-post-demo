@@ -28,14 +28,24 @@ export async function POST(request: Request) {
   const token = getTokenFromHeader(authHeader);
 
   if (!token) {
-    return NextResponse.json({ error: '인증이 필요합니다.' }, { status: 401 });
+    return NextResponse.json(
+      { error: '인증이 필요합니다.', code: 'authorization' },
+      { status: 401 },
+    );
   }
 
-  const payload = verifyToken(token);
+  const { payload, expired } = verifyToken(token);
+
+  if (expired) {
+    return NextResponse.json(
+      { error: '토큰이 만료되었습니다.', code: 'expired_token' },
+      { status: 401 },
+    );
+  }
 
   if (!payload) {
     return NextResponse.json(
-      { error: '유효하지 않은 토큰입니다.' },
+      { error: '유효하지 않은 토큰입니다.', code: 'invalid_token' },
       { status: 401 },
     );
   }
@@ -66,14 +76,24 @@ export async function DELETE(request: Request) {
   const token = getTokenFromHeader(authHeader);
 
   if (!token) {
-    return NextResponse.json({ error: '인증이 필요합니다.' }, { status: 401 });
+    return NextResponse.json(
+      { error: '인증이 필요합니다.', code: 'authorization' },
+      { status: 401 },
+    );
   }
 
-  const payload = verifyToken(token);
+  const { payload, expired } = verifyToken(token);
+
+  if (expired) {
+    return NextResponse.json(
+      { error: '토큰이 만료되었습니다.', code: 'expired_token' },
+      { status: 401 },
+    );
+  }
 
   if (!payload) {
     return NextResponse.json(
-      { error: '유효하지 않은 토큰입니다.' },
+      { error: '유효하지 않은 토큰입니다.', code: 'invalid_token' },
       { status: 401 },
     );
   }
@@ -82,7 +102,7 @@ export async function DELETE(request: Request) {
 
   if (!body.ids || body.ids.length === 0) {
     return NextResponse.json(
-      { error: '삭제할 게시글을 선택해주세요.' },
+      { error: '삭제할 게시글을 선택해주세요.', code: 'bad_request' },
       { status: 400 },
     );
   }

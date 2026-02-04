@@ -1,4 +1,4 @@
-import { PostList } from '@/components/posts/PostList';
+import { PostList } from './_components/PostList';
 import { prisma } from '@/data/prisma';
 
 export default async function PostsPage() {

@@ -1,6 +1,6 @@
 ---
 name: create-component
-description: Next.js 14 TypeScript 함수형 컴포넌트를 생성합니다. 게시판의 UI 컴포넌트, 레이아웃 컴포넌트, 게시판 컴포넌트를 만들 때 사용합니다.
+description: Next.js 14 TypeScript 함수형 컴포넌트를 생성합니다. UI 컴포넌트, 레이아웃 컴포넌트, 게시판 서버 컴포넌트, 클라이언트 컴포넌트를 만들 때 사용합니다.
 argument-hint: '[component-name] [type: ui|layout|posts]'
 ---
 
@@ -27,7 +27,11 @@ argument-hint: '[component-name] [type: ui|layout|posts]'
 - Props 인터페이스 정의
 - Tailwind CSS로 스타일링
 - `any` 타입 금지
-- `/posts` 는 서버 컴포넌트로 작성한다.
+- 초기 데이터 패칭은 반드시 Server Component에서 수행한다.
+- 재사용 가능하며 비즈니스 로직이 없는 컴포넌트는 /components 디렉토리 하위에 위치한다.
+- 비즈니스 로직이 포함된 Client Component는 /app 하위의 기능(페이지) 단위 디렉토리에 위치한다.
+- 컴포넌트는 기능 또는 역할 단위의 폴더로 분리한다.
+- 여러 페이지에서 공통으로 재사용되는 atomic 컴포넌트는 /components/ui에 작성한다.
 
 ## 클라이언트 컴포넌트 템플릿
 

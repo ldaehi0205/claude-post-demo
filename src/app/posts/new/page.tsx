@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
-import { PostForm } from '@/components/posts/PostForm';
+import { PostForm } from '../_components/PostForm';
 
 export default function NewPostPage() {
   const router = useRouter();

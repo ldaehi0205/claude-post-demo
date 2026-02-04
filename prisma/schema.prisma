@@ -9,12 +9,13 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  userID    String   @unique
-  password  String
-  name      String
-  createdAt DateTime @default(now())
-  posts     Post[]
+  id            Int            @id @default(autoincrement())
+  userID        String         @unique
+  password      String
+  name          String
+  createdAt     DateTime       @default(now())
+  posts         Post[]
+  refreshTokens RefreshToken[]
 }
 
 model Post {
@@ -25,4 +26,15 @@ model Post {
   updatedAt DateTime @updatedAt
   authorId  Int
   author    User     @relation(fields: [authorId], references: [id])
+}
+
+model RefreshToken {
+  id           Int      @id @default(autoincrement())
+  token        String   @unique
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt    DateTime // Absolute timeout (30일)
+  lastSeenAt   DateTime @default(now()) // Idle timeout 체크용
+  revoked      Boolean  @default(false)
+  createdAt    DateTime @default(now())
 }

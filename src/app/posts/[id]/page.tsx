@@ -1,4 +1,4 @@
-import { PostDetail } from '@/components/posts/PostDetail'
+import { PostDetail } from '../_components/PostDetail'
 
 interface Props {
   params: { id: string }
