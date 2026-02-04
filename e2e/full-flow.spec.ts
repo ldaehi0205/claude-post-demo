@@ -306,7 +306,10 @@ test.describe('전체 흐름 E2E 테스트', () => {
 
       // 수정 버튼 클릭
       const commentItem = page.locator('li').filter({ hasText: originalComment });
-      await commentItem.getByText('수정').click();
+      await commentItem.getByRole('button', { name: '수정' }).click();
+
+      // 수정 textarea가 나타날 때까지 대기
+      await expect(commentItem.locator('textarea')).toBeVisible({ timeout: 5000 });
 
       // 수정 textarea에 새 내용 입력
       const editedComment = `수정된 댓글 ${Date.now()}`;
