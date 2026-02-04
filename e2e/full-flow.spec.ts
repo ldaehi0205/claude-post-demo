@@ -258,19 +258,9 @@ test.describe('전체 흐름 E2E 테스트', () => {
       await page.waitForURL(/\/posts\/\d+/, { timeout: 5000 });
     }
 
-    // UI를 통해 로그인만 수행하는 헬퍼 함수
-    async function login(page: Page): Promise<void> {
-      await page.goto('/login');
-      await fillInputByLabel(page, '아이디', TEST_USER.userID);
-      await fillInputByLabel(page, '비밀번호', TEST_USER.password);
-      await page.getByRole('button', { name: '로그인' }).click();
-      await page.waitForURL(/\/(posts)?$/, { timeout: 5000 });
-    }
-
     test('비로그인 상태에서 댓글 목록 조회 가능, 작성 폼 미표시', async ({ page }) => {
       // 먼저 로그인해서 게시글 생성
       await loginAndCreatePost(page);
-      const postUrl = page.url();
 
       // 로그아웃 (localStorage 클리어)
       await page.evaluate(() => localStorage.removeItem('accessToken'));
