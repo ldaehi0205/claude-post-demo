@@ -8,17 +8,20 @@ const TEST_USER = {
 
 // label 텍스트로 input 찾기 헬퍼 함수
 async function fillInputByLabel(page: Page, labelText: string, value: string) {
-  const label = page.locator('label', { hasText: labelText }).first();
-  const container = label.locator('..');
-  const input = container.locator('input');
-  await input.fill(value);
+  // 아이디는 첫 번째 input, 비밀번호는 두 번째 input
+  if (labelText === '아이디') {
+    await page.locator('input[type="text"]').first().fill(value);
+  } else if (labelText === '비밀번호') {
+    await page.locator('input[type="password"]').first().fill(value);
+  } else if (labelText === '제목') {
+    await page.locator('input').first().fill(value);
+  } else if (labelText === '이름') {
+    await page.locator('input').nth(2).fill(value);
+  }
 }
 
 async function fillTextareaByLabel(page: Page, labelText: string, value: string) {
-  const label = page.locator('label', { hasText: labelText }).first();
-  const container = label.locator('..');
-  const textarea = container.locator('textarea');
-  await textarea.fill(value);
+  await page.locator('textarea').first().fill(value);
 }
 
 test.describe('전체 흐름 E2E 테스트', () => {
