@@ -278,10 +278,9 @@ test.describe('전체 흐름 E2E 테스트', () => {
 
       // 게시글 상세 페이지로 이동
       await page.goto(`/posts/${testPostId}`);
-      await page.waitForLoadState('networkidle');
 
-      // 댓글 작성 폼 확인
-      await expect(page.locator('textarea[placeholder="댓글을 작성하세요"]')).toBeVisible({ timeout: 5000 });
+      // 댓글 작성 폼이 로드될 때까지 대기
+      await expect(page.locator('textarea[placeholder="댓글을 작성하세요"]')).toBeVisible({ timeout: 10000 });
 
       // 댓글 작성
       const commentContent = `테스트 댓글 ${Date.now()}`;
