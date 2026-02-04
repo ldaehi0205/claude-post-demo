@@ -8,16 +8,53 @@
 - 초기화면은 `/posts` 로 라우팅되지만 게시글 작성권한은 로그인 사용자만 로그인 가능하다. 인증된 사용자가 아닌 경우 게시글 작성 페이지 접근하려는 경우 `/login` 리다이렉트
 - 게시글 수정은 작성자 본인만 가능, 삭제는 로그인된 모든 사용자가 삭제 가능
 
-- 시스템에 대한 추가,변경 사항은 CLAUDE.md 파일에 작성/수정한다.
-- 비즈니스 로직 변경은 e2e 테스트코드에 추가한다.
-- 추가,변경된 API 및 토큰정보는 `docs/API.md`에 작성한다.
-
 - 토큰 정책:
   - Access Token(JWT): 60분 만료
   - Refresh Token: HttpOnly · Secure Cookie에 저장, Idle timeout 14일(마지막 사용 기준), Absolute timeout 30일
   - Refresh Token Rotation: 매 refresh 시 새 Refresh Token을 Set-Cookie로 발급, 기존 토큰은 revoke 처리
   - Access 만료로 401 status:expired_token 발생 시에만 refresh를 호출해서 새 Access를 발급한다.
   - refresh 실패(401 status: expired_token) 시 클라이언트는 로그아웃 처리 및 로그인 페이지로 이동한다.
+
+## AI 코드 생성 워크플로우
+
+단, 변경 범위가 “사소한 변경(minor change)”에 해당하는 경우에는
+3번(테스트 작성)과 5번(문서화)을 생략할 수 있다.
+단계 중 하나라도 조건을 위반하면 작업은 실패로 간주한다.
+
+[사소한 변경(minor change) 정의]
+
+- 비즈니스 로직 변경이 없는 경우
+- 외부 API 계약(요청/응답/에러 코드) 변경이 없는 경우
+- 토큰/인증/보안 정책 변경이 없는 경우
+- 동작 결과가 기존과 동일한 리팩터링, 네이밍 수정, 주석/문구 수정
+- UI 표시 텍스트, 로그 메시지, 코드 포맷 수정
+
+[개발 워크플로우]
+
+1. 요구사항 / 성공 조건 / 변경 파일 계획을 먼저 제시한다.
+   - 구현할 기능 요약
+   - 완료 기준(Acceptance Criteria)
+   - 수정 또는 추가될 파일 목록
+
+2. 코드를 구현한다.
+
+3. 최소 테스트 코드 1개 이상을 작성한다.
+   - 비즈니스 로직 변경이 있는 경우, 반드시 e2e 테스트 코드를 추가한다.
+
+4. 코드 작성 완료 후, 반드시 다음 체크리스트를 검증한다.
+   - `.claude/skills/review-code/SKILL.md`의 체크리스트 기준으로 코드 검증
+
+5. 문서화를 수행한다.
+   - 추가·변경된 API 및 토큰 관련 사항은 `docs/API.md`에 작성한다.
+   - 시스템 전반의 추가·변경 사항은 `CLAUDE.md` 파일에 작성 또는 수정한다.
+
+6. 로컬 검증 커맨드와 기대 결과를 제공한다.
+   - 예: test / build / lint / typecheck
+   - 각 커맨드의 성공 기준을 명확히 기술한다.
+
+7. 작업 결과를 정리한다.
+   - 변경 요약
+   - 남아 있는 리스크 및 엣지 케이스 체크리스트
 
 ## 기술 스택
 
@@ -69,61 +106,13 @@ post-root/
 └── package.json
 ```
 
-## 파일 배치 규칙
+## 개발 규칙
 
-- 페이지: `app/` 폴더
-- API 엔드포인트: `app/api/` 폴더
-- 공통 레이아웃 컴포넌트: `components/layout/`
-- 공통 UI: `components/ui/`
-- 게시판 컴포넌트: `components/posts/`
-- API 호출 함수: `apis/`
-- 커스텀 훅: `hooks/`
-- DB 접근: `data/prisma.ts` 통해서만
-- 유틸 함수: `utils/`
+아래 항목은 `.claude/skills/` 디렉토리의 스킬 문서를 참고:
 
-### 인증 API
-
-| Method | URL                | 설명              | 인증 필요  |
-| ------ | ------------------ | ----------------- | ---------- |
-| POST   | /api/auth/register | 회원가입          | X          |
-| POST   | /api/auth/login    | 로그인 (JWT 발급) | X          |
-| POST   | /api/auth/refresh  | Access Token 갱신 | X (cookie) |
-| GET    | /api/auth/me       | 현재 사용자 정보  | O          |
-
-## API 엔드포인트
-
-| Method | URL            | 설명      |
-| ------ | -------------- | --------- |
-| GET    | /api/posts     | 목록 조회 |
-| POST   | /api/posts     | 작성      |
-| GET    | /api/posts/:id | 상세 조회 |
-| PUT    | /api/posts/:id | 수정      |
-| DELETE | /api/posts/:id | 삭제      |
-
-## 인증 흐름
-
-1. **회원가입**: 비밀번호를 bcrypt로 해싱하여 DB 저장
-2. **로그인**: 이메일/비밀번호 확인 후 JWT 토큰 발급
-3. **토큰 저장**: 클라이언트는 localStorage에 토큰 저장 (key:`accessToken`)
-4. **API 요청**: Axios interceptor가 모든 요청에 `Authorization: Bearer {token}` 헤더 자동 추가
-5. **토큰 검증**: 서버는 미들웨어에서 JWT 검증 후 요청 처리
-6. **로그아웃**: localStorage에서 토큰 삭제
-
-## 컴포넌트 규칙
-
-- 서버 컴포넌트: 기본 (DB 조회 등)
-- 클라이언트 컴포넌트: useState, onClick 등 필요할 때만 "use client"
-- 인증 상태는 useAuth 훅으로 관리
-
-# 코드 규칙
-
-- API 응답이 HTTP 200이 아닐 경우, Axios interceptor에서 일괄적으로 에러를 처리해 서버 응답 메시지를 alert로 사용자에게 표시한다.
-
-## 금지 사항
-
-- 컴포넌트에서 Prisma 직접 호출 금지 (API 통해서만)
-- `components/ui/`에 비즈니스 로직 금지
-- `any` 타입 사용 금지
+- **파일 배치 규칙, 코드 규칙, 금지 사항**: `.claude/skills/review-code/SKILL.md`
+- **컴포넌트 규칙**: `.claude/skills/create-component/SKILL.md`
+- **API 명세, 인증 흐름, 토큰 정책**: `docs/API.md`
 
 ## 참고 문서
 
