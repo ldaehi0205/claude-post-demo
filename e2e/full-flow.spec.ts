@@ -20,7 +20,7 @@ async function fillInputByLabel(page: Page, labelText: string, value: string) {
   }
 }
 
-async function fillTextareaByLabel(page: Page, labelText: string, value: string) {
+async function fillTextareaByLabel(page: Page, _labelText: string, value: string) {
   await page.locator('textarea').first().fill(value);
 }
 
