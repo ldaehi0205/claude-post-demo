@@ -8,12 +8,13 @@ const TEST_USER = {
 
 // label 텍스트로 input 찾기 헬퍼 함수
 async function fillInputByLabel(page: Page, labelText: string, value: string) {
-  // label을 포함하는 div 내의 input 선택
-  const inputLocator = page.locator(`div:has(> label:text-is("${labelText}")) > input`);
+  // label 찾기
+  const label = page.locator('label').filter({ hasText: labelText }).first();
+  await label.waitFor({ state: 'visible', timeout: 5000 });
 
-  // 요소가 보일 때까지 대기 후 입력
-  await inputLocator.waitFor({ state: 'visible', timeout: 5000 });
-  await inputLocator.fill(value);
+  // label의 형제 input 찾기 (CSS ~ 선택자 사용)
+  const input = label.locator('~ input');
+  await input.fill(value);
 }
 
 async function fillTextareaByLabel(page: Page, _labelText: string, value: string) {
