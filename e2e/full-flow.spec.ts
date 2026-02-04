@@ -12,8 +12,8 @@ async function fillInputByLabel(page: Page, labelText: string, value: string) {
   const label = page.locator('label').filter({ hasText: labelText }).first();
   await label.waitFor({ state: 'visible', timeout: 5000 });
 
-  // label의 형제 input 찾기 (CSS ~ 선택자 사용)
-  const input = label.locator('~ input');
+  // label의 형제 input 찾기 (XPath 사용)
+  const input = label.locator('xpath=following-sibling::input');
   await input.fill(value);
 }
 
