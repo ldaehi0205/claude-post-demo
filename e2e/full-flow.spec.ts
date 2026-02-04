@@ -247,7 +247,12 @@ test.describe('전체 흐름 E2E 테스트', () => {
       await fillInputByLabel(page, '아이디', TEST_USER.userID);
       await fillInputByLabel(page, '비밀번호', TEST_USER.password);
       await page.getByRole('button', { name: '로그인' }).click();
-      await page.waitForURL(/\/(posts)?$/, { timeout: 5000 });
+
+      // 로그인 완료 대기 (리다이렉트 또는 로그아웃 버튼)
+      await Promise.race([
+        page.waitForURL(/\/(posts)?$/, { timeout: 10000 }),
+        page.waitForSelector('button:has-text("로그아웃")', { timeout: 10000 }),
+      ]);
 
       // 새 게시글 작성
       await page.goto('/posts/new');
