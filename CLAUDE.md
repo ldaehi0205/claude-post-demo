@@ -132,3 +132,13 @@ post-root/
 npm install              # 의존성 설치
 npm run dev              # 개발 서버 실행
 ```
+
+## 자동 커밋 정책
+
+AI가 작업 완료 후 자동으로 커밋을 수행한다.
+
+- 변경 사항이 있을 때만 commit한다.
+- commit message는 변경 요약을 한국어로 작성한다.
+- 테스트/검증 단계가 실패하면 commit하지 않는다.
+- minor change는 간단한 메시지로 커밋한다.
+- push는 사용자가 명시적으로 요청할 때만 수행한다.
