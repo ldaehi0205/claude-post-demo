@@ -234,8 +234,6 @@ test.describe('전체 흐름 E2E 테스트', () => {
   });
 
   test.describe('5. 댓글 CRUD 테스트', () => {
-    let postUrl: string;
-
     test.beforeEach(async ({ page }) => {
       // 로그인
       await page.goto('/login');
