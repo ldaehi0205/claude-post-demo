@@ -3,12 +3,27 @@
     "playwright": {
       "type": "stdio",
       "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-playwright", "--headless=false"],
+      "env": {}
+    },
+    "git": {
+      "type": "stdio",
+      "command": "npx",
       "args": [
         "-y",
-        "@anthropic-ai/mcp-server-playwright",
-        "--headless=false"
-      ],
-      "env": {}
+        "@modelcontextprotocol/server-git",
+        "--repository",
+        "/Users/leedaehee/Applications/post-demo"
+      ]
+    },
+    "filesystem": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/leedaehee/Applications/post-demo"
+      ]
     }
   }
 }
