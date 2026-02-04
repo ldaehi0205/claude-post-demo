@@ -8,13 +8,19 @@ const TEST_USER = {
 
 // label 텍스트로 input 찾기 헬퍼 함수
 async function fillInputByLabel(page: Page, labelText: string, value: string) {
-  // label 찾기
-  const label = page.locator('label').filter({ hasText: labelText }).first();
-  await label.waitFor({ state: 'visible', timeout: 5000 });
+  // 모든 input이 로드될 때까지 대기
+  await page.locator('input').first().waitFor({ state: 'visible', timeout: 5000 });
 
-  // label의 형제 input 찾기 (XPath 사용)
-  const input = label.locator('xpath=following-sibling::input');
-  await input.fill(value);
+  // 페이지별로 input 순서가 정해져 있음
+  if (labelText === '아이디') {
+    await page.locator('input').nth(0).fill(value);
+  } else if (labelText === '비밀번호') {
+    await page.locator('input').nth(1).fill(value);
+  } else if (labelText === '제목') {
+    await page.locator('input').nth(0).fill(value);
+  } else if (labelText === '이름') {
+    await page.locator('input').nth(2).fill(value);
+  }
 }
 
 async function fillTextareaByLabel(page: Page, _labelText: string, value: string) {
