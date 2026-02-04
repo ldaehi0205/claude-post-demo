@@ -3,8 +3,11 @@ import { test, expect } from '@playwright/test';
 test('debug full login flow', async ({ page }) => {
   await page.goto('/login');
 
-  // 페이지 로드 대기
-  await page.waitForSelector('input');
+  // JavaScript hydration 대기 - 버튼이 활성화될 때까지
+  // disabled 속성이 없는 버튼이 나타날 때까지 대기
+  await page.waitForSelector('button:not([disabled])');
+  // 추가 대기 (hydration 완료 보장)
+  await page.waitForTimeout(500);
 
   // 아이디 입력
   await page.locator('input').nth(0).fill('testuser');
