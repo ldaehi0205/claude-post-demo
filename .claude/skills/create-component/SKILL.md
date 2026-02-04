@@ -1,6 +1,6 @@
 ---
 name: create-component
-description: Next.js 14 TypeScript 함수형 컴포넌트를 생성합니다. UI 컴포넌트, 레이아웃 컴포넌트, 게시판 서버 컴포넌트, 클라이언트 컴포넌트를 만들 때 사용합니다.
+description: Next.js 14 TypeScript 함수형 컴포넌트를 생성합니다. UI 컴포넌트, 레이아웃 컴포넌트, 서버 컴포넌트, 클라이언트 컴포넌트를 만들 때 사용합니다.
 argument-hint: '[component-name] [type: ui|layout|posts]'
 ---
 
