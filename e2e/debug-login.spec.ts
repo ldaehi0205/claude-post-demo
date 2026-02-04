@@ -1,13 +1,20 @@
 import { test, expect } from '@playwright/test';
 
 test('debug full login flow', async ({ page }) => {
-  await page.goto('/login');
+  // 페이지 로드 대기 (networkidle로 JavaScript 로드 완료 대기)
+  await page.goto('/login', { waitUntil: 'networkidle' });
 
-  // JavaScript hydration 대기 - 버튼이 활성화될 때까지
-  // disabled 속성이 없는 버튼이 나타날 때까지 대기
-  await page.waitForSelector('button:not([disabled])');
+  // React hydration 완료 대기
+  await page.waitForFunction(() => {
+    // 입력 필드가 React에 의해 controlled 되는지 확인
+    const input = document.querySelector('input');
+    return input && input.value !== undefined;
+  });
+
   // 추가 대기 (hydration 완료 보장)
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(1000);
+
+  console.log('Page loaded and hydrated');
 
   // 아이디 입력
   await page.locator('input').nth(0).fill('testuser');
