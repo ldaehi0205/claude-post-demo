@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { usePost, useDeletePost } from '@/hooks/usePosts';
 import { useAuth } from '@/hooks/useAuth';
+import { CommentSection } from './comments/CommentSection';
 
 interface PostDetailProps {
   id: number;
