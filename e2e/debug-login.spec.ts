@@ -41,14 +41,18 @@ test('debug full login flow', async ({ page }) => {
   await page.getByRole('button', { name: '로그인' }).click();
   console.log('Clicked login button');
 
-  // 응답 대기 (충분한 시간)
-  await page.waitForTimeout(3000);
-  console.log('Current URL after click:', page.url());
-
-  // 페이지 HTML 확인
-  const html = await page.content();
-  console.log('Page contains 로그아웃:', html.includes('로그아웃'));
-  console.log('Page contains 에러:', html.includes('올바르지 않습니다'));
+  // 리다이렉트 또는 로그아웃 버튼 대기
+  try {
+    await Promise.race([
+      page.waitForURL(/\/(posts)?$/, { timeout: 10000 }),
+      page.waitForSelector('button:has-text("로그아웃")', { timeout: 10000 }),
+    ]);
+    console.log('Login completed, current URL:', page.url());
+  } catch (e) {
+    console.log('Login timeout, current URL:', page.url());
+    // 스크린샷
+    await page.screenshot({ path: '/tmp/debug-login-timeout.png' });
+  }
 
   // 스크린샷 (버튼 클릭 후)
   await page.screenshot({ path: '/tmp/debug-after-click.png' });
