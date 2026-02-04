@@ -375,6 +375,181 @@ Access Token 갱신
 
 ---
 
+## 댓글 API
+
+### GET /posts/:id/comments
+
+게시글의 댓글 목록 조회
+
+**Path Parameters**
+
+| 파라미터 | 타입   | description |
+| -------- | ------ | ----------- |
+| id       | number | 게시글 ID   |
+
+**Response 200**
+
+```json
+[
+  {
+    "id": 1,
+    "content": "댓글 내용",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z",
+    "postId": 1,
+    "authorId": 1,
+    "author": {
+      "id": 1,
+      "name": "테스트",
+      "userID": "testuser"
+    }
+  }
+]
+```
+
+---
+
+### POST /posts/:id/comments
+
+댓글 작성 (로그인 필요)
+
+**Headers**
+
+| 헤더          | 필수 | description    |
+| ------------- | ---- | -------------- |
+| Authorization | O    | Bearer {token} |
+
+**Path Parameters**
+
+| 파라미터 | 타입   | description |
+| -------- | ------ | ----------- |
+| id       | number | 게시글 ID   |
+
+**Request Body**
+
+| 필드    | 타입   | 필수 | description |
+| ------- | ------ | ---- | ----------- |
+| content | string | O    | 댓글 내용   |
+
+**Response 201**
+
+```json
+{
+  "id": 1,
+  "content": "댓글 내용",
+  "createdAt": "2024-01-01T00:00:00.000Z",
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "postId": 1,
+  "authorId": 1,
+  "author": {
+    "id": 1,
+    "name": "테스트",
+    "userID": "testuser"
+  }
+}
+```
+
+**Error Response**
+
+| status | code          | description           |
+| ------ | ------------- | --------------------- |
+| 401    | authorization | 인증이 필요합니다     |
+| 401    | invalid_token | 유효하지 않은 토큰    |
+| 401    | expired_token | 토큰이 만료되었습니다 |
+| 404    | not_found     | 게시글을 찾을 수 없음 |
+
+---
+
+### PUT /posts/:id/comments/:commentId
+
+댓글 수정 (작성자 본인만 가능)
+
+**Headers**
+
+| 헤더          | 필수 | description    |
+| ------------- | ---- | -------------- |
+| Authorization | O    | Bearer {token} |
+
+**Path Parameters**
+
+| 파라미터  | 타입   | description |
+| --------- | ------ | ----------- |
+| id        | number | 게시글 ID   |
+| commentId | number | 댓글 ID     |
+
+**Request Body**
+
+| 필드    | 타입   | 필수 | description |
+| ------- | ------ | ---- | ----------- |
+| content | string | O    | 댓글 내용   |
+
+**Response 200**
+
+```json
+{
+  "id": 1,
+  "content": "수정된 댓글 내용",
+  "createdAt": "2024-01-01T00:00:00.000Z",
+  "updatedAt": "2024-01-01T12:00:00.000Z",
+  "postId": 1,
+  "authorId": 1,
+  "author": {
+    "id": 1,
+    "name": "테스트",
+    "userID": "testuser"
+  }
+}
+```
+
+**Error Response**
+
+| status | code          | description           |
+| ------ | ------------- | --------------------- |
+| 401    | authorization | 인증이 필요합니다     |
+| 401    | invalid_token | 유효하지 않은 토큰    |
+| 401    | expired_token | 토큰이 만료되었습니다 |
+| 403    | forbidden     | 수정 권한이 없습니다  |
+| 404    | not_found     | 댓글을 찾을 수 없음   |
+
+---
+
+### DELETE /posts/:id/comments/:commentId
+
+댓글 삭제 (작성자 본인만 가능)
+
+**Headers**
+
+| 헤더          | 필수 | description    |
+| ------------- | ---- | -------------- |
+| Authorization | O    | Bearer {token} |
+
+**Path Parameters**
+
+| 파라미터  | 타입   | description |
+| --------- | ------ | ----------- |
+| id        | number | 게시글 ID   |
+| commentId | number | 댓글 ID     |
+
+**Response 200**
+
+```json
+{
+  "message": "댓글이 삭제되었습니다."
+}
+```
+
+**Error Response**
+
+| status | code          | description           |
+| ------ | ------------- | --------------------- |
+| 401    | authorization | 인증이 필요합니다     |
+| 401    | invalid_token | 유효하지 않은 토큰    |
+| 401    | expired_token | 토큰이 만료되었습니다 |
+| 403    | forbidden     | 삭제 권한이 없습니다  |
+| 404    | not_found     | 댓글을 찾을 수 없음   |
+
+---
+
 ## 공통 에러 응답 형식
 
 ```json
