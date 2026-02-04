@@ -337,7 +337,7 @@ test.describe('전체 흐름 E2E 테스트', () => {
 
       // 삭제 버튼 클릭
       const commentItem = page.locator('li').filter({ hasText: commentToDelete });
-      await commentItem.getByText('삭제').click();
+      await commentItem.getByRole('button', { name: '삭제' }).click();
 
       // 삭제 확인
       await expect(page.getByText(commentToDelete)).not.toBeVisible({ timeout: 5000 });
