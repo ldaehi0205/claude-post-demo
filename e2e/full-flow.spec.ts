@@ -257,12 +257,15 @@ test.describe('전체 흐름 E2E 테스트', () => {
     });
 
     test('비로그인 상태에서 댓글 목록 조회 가능, 작성 폼 미표시', async ({ page }) => {
+      // localStorage 클리어하여 비로그인 상태 확보
+      await page.goto('/');
+      await page.evaluate(() => localStorage.removeItem('accessToken'));
+
       // 비로그인 상태로 게시글 상세 페이지 접근
       await page.goto(`/posts/${testPostId}`);
-      await page.waitForLoadState('networkidle');
 
-      // 댓글 섹션 확인
-      await expect(page.getByText(/댓글 \d+개/)).toBeVisible({ timeout: 5000 });
+      // 댓글 섹션이 로드될 때까지 대기
+      await expect(page.getByText(/댓글 \d+개/)).toBeVisible({ timeout: 10000 });
 
       // 댓글 작성 폼(textarea)이 없어야 함
       await expect(page.locator('textarea[placeholder="댓글을 작성하세요"]')).not.toBeVisible();
