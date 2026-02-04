@@ -64,6 +64,8 @@ export function PostDetail({ id }: PostDetailProps) {
           목록
         </Button>
       </div>
+
+      <CommentSection postId={id} />
     </div>
   );
 }
