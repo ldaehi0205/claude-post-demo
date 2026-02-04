@@ -309,12 +309,15 @@ test.describe('전체 흐름 E2E 테스트', () => {
       await commentItem.getByRole('button', { name: '수정' }).click();
 
       // 수정 textarea가 나타날 때까지 대기
-      await expect(commentItem.locator('textarea')).toBeVisible({ timeout: 5000 });
+      const editTextarea = commentItem.locator('textarea');
+      await expect(editTextarea).toBeVisible({ timeout: 5000 });
 
       // 수정 textarea에 새 내용 입력
       const editedComment = `수정된 댓글 ${Date.now()}`;
-      await commentItem.locator('textarea').fill(editedComment);
-      await commentItem.getByRole('button', { name: '저장' }).click();
+      await editTextarea.fill(editedComment);
+
+      // 저장 버튼 클릭 (수정 모드에서는 li 내부에서 직접 찾음)
+      await page.getByRole('button', { name: '저장' }).click();
 
       // 수정된 댓글 확인
       await expect(page.getByText(editedComment)).toBeVisible({ timeout: 5000 });
