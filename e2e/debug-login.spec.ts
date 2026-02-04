@@ -28,22 +28,18 @@ test('debug full login flow', async ({ page }) => {
   await page.screenshot({ path: '/tmp/debug-before-click.png' });
   console.log('Screenshot before click saved');
 
-  // 로그인 버튼 클릭 (네트워크 요청 대기)
-  await Promise.all([
-    page.waitForResponse(response =>
-      response.url().includes('/api/auth/login') && response.status() === 200
-    ),
-    page.getByRole('button', { name: '로그인' }).click(),
-  ]);
-  console.log('Login API response received');
+  // 로그인 버튼 클릭
+  await page.getByRole('button', { name: '로그인' }).click();
+  console.log('Clicked login button');
 
-  // 리다이렉트 대기
-  try {
-    await page.waitForURL(/\/(posts)?$/, { timeout: 5000 });
-    console.log('Redirected to:', page.url());
-  } catch (e) {
-    console.log('No redirect, current URL:', page.url());
-  }
+  // 응답 대기 (충분한 시간)
+  await page.waitForTimeout(3000);
+  console.log('Current URL after click:', page.url());
+
+  // 페이지 HTML 확인
+  const html = await page.content();
+  console.log('Page contains 로그아웃:', html.includes('로그아웃'));
+  console.log('Page contains 에러:', html.includes('올바르지 않습니다'));
 
   // 스크린샷 (버튼 클릭 후)
   await page.screenshot({ path: '/tmp/debug-after-click.png' });
