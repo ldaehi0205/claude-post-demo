@@ -8,14 +8,17 @@ const TEST_USER = {
 
 // label 텍스트로 input 찾기 헬퍼 함수
 async function fillInputByLabel(page: Page, labelText: string, value: string) {
+  // 먼저 해당 label이 보일 때까지 대기
+  await page.getByText(labelText).first().waitFor({ state: 'visible', timeout: 5000 });
+
   if (labelText === '아이디') {
-    await page.locator('input').first().fill(value);
+    await page.locator('input[type="text"]').first().fill(value);
   } else if (labelText === '비밀번호') {
-    await page.locator('input').nth(1).fill(value);
+    await page.locator('input[type="password"]').fill(value);
   } else if (labelText === '제목') {
-    await page.locator('input').first().fill(value);
+    await page.locator('input[type="text"]').first().fill(value);
   } else if (labelText === '이름') {
-    await page.locator('input').nth(2).fill(value);
+    await page.locator('input[type="text"]').nth(1).fill(value);
   }
 }
 
