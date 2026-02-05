@@ -24,6 +24,19 @@
         "@modelcontextprotocol/server-filesystem",
         "/Users/leedaehee/Applications/post-demo"
       ]
+    },
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"]
+    },
+    "figma": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "figma-developer-mcp", "--stdio"],
+      "env": {
+        "FIGMA_API_KEY": "${FIGMA_ACCESS_TOKEN}"
+      }
     }
   }
 }
