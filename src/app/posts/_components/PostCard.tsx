@@ -32,7 +32,7 @@ export function PostCard({ post, ids, selectPost }: PostCardProps) {
             </h2>
             <span className="text-sm text-gray-400 whitespace-nowrap">
               {post.author.name} / {new Date(post.createdAt).toLocaleDateString()}
-              {post._count && post._count.comments > 0 && ` [${post._count.comments}]`}
+              {post._count && ` [${post._count.comments}]`}
             </span>
           </div>
         </div>
