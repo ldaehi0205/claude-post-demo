@@ -239,7 +239,209 @@ test.describe('전체 흐름 E2E 테스트', () => {
     });
   });
 
-  test.describe('5. 댓글 CRUD 테스트', () => {
+  test.describe('5. 이미지 업로드 테스트', () => {
+    test.beforeEach(async ({ page }) => {
+      // 로그인
+      await page.goto('/login');
+      await fillInputByLabel(page, '아이디', TEST_USER.userID);
+      await fillInputByLabel(page, '비밀번호', TEST_USER.password);
+      await page.getByRole('button', { name: '로그인' }).click();
+      await page.waitForURL(/\/(posts)?$/, { timeout: 5000 });
+    });
+
+    test('이미지 업로드 UI 확인', async ({ page }) => {
+      await page.goto('/posts/new');
+
+      // 이미지 업로드 영역 확인
+      await expect(page.getByText('이미지')).toBeVisible();
+      await expect(page.getByText('클릭하거나 이미지를 드래그하세요')).toBeVisible();
+      await expect(page.getByText('JPG, PNG, GIF, WebP (최대 5MB)')).toBeVisible();
+    });
+
+    test('이미지 선택 시 미리보기 표시', async ({ page }) => {
+      await page.goto('/posts/new');
+
+      // 테스트용 이미지 파일 생성 (1x1 투명 PNG)
+      const buffer = Buffer.from(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+        'base64'
+      );
+
+      // 파일 선택
+      const fileChooserPromise = page.waitForEvent('filechooser');
+      await page.getByText('클릭하거나 이미지를 드래그하세요').click();
+      const fileChooser = await fileChooserPromise;
+      await fileChooser.setFiles({
+        name: 'test-image.png',
+        mimeType: 'image/png',
+        buffer: buffer,
+      });
+
+      // 미리보기 이미지가 나타나는지 확인
+      await expect(page.locator('img[alt="미리보기"]')).toBeVisible({ timeout: 5000 });
+
+      // 삭제 버튼(X)이 나타나는지 확인
+      await expect(page.getByRole('button', { name: 'X' })).toBeVisible();
+    });
+
+    test('이미지 삭제 버튼 클릭 시 미리보기 제거', async ({ page }) => {
+      await page.goto('/posts/new');
+
+      // 테스트용 이미지 파일 생성
+      const buffer = Buffer.from(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+        'base64'
+      );
+
+      // 파일 선택
+      const fileChooserPromise = page.waitForEvent('filechooser');
+      await page.getByText('클릭하거나 이미지를 드래그하세요').click();
+      const fileChooser = await fileChooserPromise;
+      await fileChooser.setFiles({
+        name: 'test-image.png',
+        mimeType: 'image/png',
+        buffer: buffer,
+      });
+
+      // 미리보기 확인
+      await expect(page.locator('img[alt="미리보기"]')).toBeVisible({ timeout: 5000 });
+
+      // 삭제 버튼 클릭
+      await page.getByRole('button', { name: 'X' }).click();
+
+      // 미리보기가 사라지고 업로드 영역이 다시 나타나는지 확인
+      await expect(page.locator('img[alt="미리보기"]')).not.toBeVisible();
+      await expect(page.getByText('클릭하거나 이미지를 드래그하세요')).toBeVisible();
+    });
+
+    test('이미지 없이 게시글 작성 가능', async ({ page }) => {
+      await page.goto('/posts/new');
+
+      const title = `이미지 없는 게시글 ${Date.now()}`;
+      const content = '이미지 없이 작성된 게시글입니다.';
+
+      await fillInputByLabel(page, '제목', title);
+      await fillTextareaByLabel(page, '내용', content);
+      await page.getByRole('button', { name: '작성' }).click();
+
+      // 작성 후 목록 페이지로 이동 확인
+      await page.waitForURL(/\/posts$/, { timeout: 10000 });
+
+      // 목록에서 작성한 게시글 확인
+      await expect(page.getByText(title)).toBeVisible({ timeout: 3000 });
+    });
+
+    test('이미지와 함께 게시글 작성', async ({ page }) => {
+      await page.goto('/posts/new');
+
+      const title = `이미지 포함 게시글 ${Date.now()}`;
+      const content = '이미지와 함께 작성된 게시글입니다.';
+
+      await fillInputByLabel(page, '제목', title);
+      await fillTextareaByLabel(page, '내용', content);
+
+      // 테스트용 이미지 파일 생성
+      const buffer = Buffer.from(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+        'base64'
+      );
+
+      // 파일 선택
+      const fileChooserPromise = page.waitForEvent('filechooser');
+      await page.getByText('클릭하거나 이미지를 드래그하세요').click();
+      const fileChooser = await fileChooserPromise;
+      await fileChooser.setFiles({
+        name: 'test-image.png',
+        mimeType: 'image/png',
+        buffer: buffer,
+      });
+
+      // 미리보기 확인
+      await expect(page.locator('img[alt="미리보기"]')).toBeVisible({ timeout: 5000 });
+
+      await page.getByRole('button', { name: '작성' }).click();
+
+      // 작성 후 목록 페이지로 이동 확인 (타임아웃 증가 - 이미지 업로드 시간 고려)
+      await page.waitForURL(/\/posts$/, { timeout: 30000 });
+
+      // 목록에서 작성한 게시글 확인
+      await expect(page.getByText(title)).toBeVisible({ timeout: 5000 });
+    });
+
+    test('게시글 상세에서 이미지 표시 확인', async ({ page }) => {
+      // 이미지와 함께 게시글 작성
+      await page.goto('/posts/new');
+
+      const title = `상세 이미지 테스트 ${Date.now()}`;
+      await fillInputByLabel(page, '제목', title);
+      await fillTextareaByLabel(page, '내용', '이미지 표시 테스트');
+
+      const buffer = Buffer.from(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+        'base64'
+      );
+
+      const fileChooserPromise = page.waitForEvent('filechooser');
+      await page.getByText('클릭하거나 이미지를 드래그하세요').click();
+      const fileChooser = await fileChooserPromise;
+      await fileChooser.setFiles({
+        name: 'test-image.png',
+        mimeType: 'image/png',
+        buffer: buffer,
+      });
+
+      await expect(page.locator('img[alt="미리보기"]')).toBeVisible({ timeout: 5000 });
+      await page.getByRole('button', { name: '작성' }).click();
+      await page.waitForURL(/\/posts$/, { timeout: 30000 });
+
+      // 작성한 게시글 클릭하여 상세 페이지 이동
+      await page.getByText(title).click();
+      await page.waitForURL(/\/posts\/\d+/, { timeout: 5000 });
+
+      // 상세 페이지에서 이미지가 표시되는지 확인
+      await expect(page.locator(`img[alt="${title}"]`)).toBeVisible({ timeout: 5000 });
+    });
+
+    test('게시글 수정 시 기존 이미지 표시', async ({ page }) => {
+      // 이미지와 함께 게시글 작성
+      await page.goto('/posts/new');
+
+      const title = `수정 이미지 테스트 ${Date.now()}`;
+      await fillInputByLabel(page, '제목', title);
+      await fillTextareaByLabel(page, '내용', '이미지 수정 테스트');
+
+      const buffer = Buffer.from(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+        'base64'
+      );
+
+      const fileChooserPromise = page.waitForEvent('filechooser');
+      await page.getByText('클릭하거나 이미지를 드래그하세요').click();
+      const fileChooser = await fileChooserPromise;
+      await fileChooser.setFiles({
+        name: 'test-image.png',
+        mimeType: 'image/png',
+        buffer: buffer,
+      });
+
+      await expect(page.locator('img[alt="미리보기"]')).toBeVisible({ timeout: 5000 });
+      await page.getByRole('button', { name: '작성' }).click();
+      await page.waitForURL(/\/posts$/, { timeout: 30000 });
+
+      // 작성한 게시글 클릭하여 상세 페이지 이동
+      await page.getByText(title).click();
+      await page.waitForURL(/\/posts\/\d+/, { timeout: 5000 });
+
+      // 수정 버튼 클릭
+      await page.getByRole('button', { name: '수정' }).click();
+      await page.waitForURL(/\/edit/, { timeout: 5000 });
+
+      // 수정 페이지에서 기존 이미지 미리보기가 표시되는지 확인
+      await expect(page.locator('img[alt="미리보기"]')).toBeVisible({ timeout: 5000 });
+    });
+  });
+
+  test.describe('6. 댓글 CRUD 테스트', () => {
     // UI를 통해 로그인하고 새 게시글 작성 후 상세 페이지로 이동하는 헬퍼 함수
     async function loginAndCreatePost(page: Page): Promise<void> {
       // 로그인
