@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
 import { usePost, useDeletePost } from '@/hooks/usePosts';
 import { useAuth } from '@/hooks/useAuth';
@@ -46,6 +47,17 @@ export function PostDetail({ id }: PostDetailProps) {
         <span>·</span>
         <span>{new Date(post.createdAt).toLocaleString()}</span>
       </div>
+      {post.imageUrl && (
+        <div className="mb-6">
+          <Image
+            src={post.imageUrl}
+            alt={post.title}
+            width={800}
+            height={600}
+            className="rounded-lg object-contain max-h-[500px] w-auto"
+          />
+        </div>
+      )}
       <div className="prose max-w-none mb-8 whitespace-pre-wrap">
         {post.content}
       </div>
