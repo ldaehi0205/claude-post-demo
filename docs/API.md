@@ -550,6 +550,46 @@ Access Token 갱신
 
 ---
 
+## 이미지 업로드
+
+### 이미지 저장소
+
+- **저장소**: Supabase Storage
+- **버킷명**: `post-images`
+- **접근 권한**: Public
+
+### 이미지 제한 사항
+
+| 항목     | 제한                          |
+| -------- | ----------------------------- |
+| 파일크기 | 최대 5MB                      |
+| 파일형식 | JPG, PNG, GIF, WebP           |
+| 저장경로 | `posts/{timestamp}-{random}.{ext}` |
+
+### 이미지 처리 (Server Actions)
+
+게시글 작성/수정 시 Server Action을 통해 이미지를 처리합니다.
+
+**게시글 작성 시**
+- FormData에 `image` 필드로 파일 전송
+- 업로드 성공 시 `imageUrl`에 Supabase Storage URL 저장
+
+**게시글 수정 시**
+- 새 이미지 업로드: 기존 이미지 삭제 후 새 이미지 저장
+- 이미지 삭제: `removeImage: true` 필드 전송
+
+**게시글 삭제 시**
+- 연결된 이미지가 있으면 Storage에서 함께 삭제
+
+### 환경 변수
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
+---
+
 ## 공통 에러 응답 형식
 
 ```json
