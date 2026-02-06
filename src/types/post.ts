@@ -8,6 +8,9 @@ export interface Post {
   updatedAt: Date;
   authorId: number;
   author: User;
+  _count?: {
+    comments: number;
+  };
 }
 
 export interface CreatePostInput {
