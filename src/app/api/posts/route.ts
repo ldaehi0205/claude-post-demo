@@ -18,6 +18,11 @@ export async function GET() {
           userID: true,
         },
       },
+      _count: {
+        select: {
+          comments: true,
+        },
+      },
     },
   });
   return NextResponse.json(posts);
