@@ -27,7 +27,7 @@ export function PostCard({ post, ids, selectPost }: PostCardProps) {
           }`}
         >
           <div className="flex justify-between items-start">
-            <h2 className="text-lg font-semibold text-gray-900 mb-2 flex-1">
+            <h2 className="text-lg font-semibold text-gray-900 flex-1">
               {post.title}
             </h2>
             {post._count && post._count.comments > 0 && (
@@ -36,7 +36,6 @@ export function PostCard({ post, ids, selectPost }: PostCardProps) {
               </span>
             )}
           </div>
-          <p className="text-gray-600 line-clamp-2">{post.content}</p>
           <p className="text-sm text-gray-400 mt-2">
             {post.author.name} / {new Date(post.createdAt).toLocaleDateString()}
           </p>
