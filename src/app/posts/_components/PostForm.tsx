@@ -1,9 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
+import { ImageUpload } from '@/components/ui/ImageUpload';
 import { useAuth } from '@/hooks/useAuth';
 import { createPost, updatePost } from '@/app/actions/posts';
 import { Post } from '@/types/post';
@@ -16,14 +18,22 @@ export function PostForm({ post }: PostFormProps) {
   const router = useRouter();
   const { user } = useAuth();
   const isEdit = !!post;
+  const [removeImage, setRemoveImage] = useState(false);
 
-  /** 게시글 작성/수정 서버 액션 핸들러 */
   const handleSubmit = async (formData: FormData) => {
+    if (removeImage) {
+      formData.append('removeImage', 'true');
+    }
+
     if (isEdit) {
       await updatePost(formData, post.id);
     } else if (user) {
       await createPost(formData, user.id);
     }
+  };
+
+  const handleRemoveImage = () => {
+    setRemoveImage(true);
   };
 
   return (
@@ -41,6 +51,16 @@ export function PostForm({ post }: PostFormProps) {
         rows={10}
         required
       />
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          이미지
+        </label>
+        <ImageUpload
+          name="image"
+          initialImageUrl={post?.imageUrl}
+          onRemoveImage={handleRemoveImage}
+        />
+      </div>
       <div className="flex gap-2">
         <Button type="submit">{isEdit ? '수정' : '작성'}</Button>
         <Button type="button" variant="secondary" onClick={() => router.back()}>
