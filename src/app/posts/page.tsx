@@ -4,7 +4,14 @@ import { prisma } from '@/data/prisma';
 export default async function PostsPage() {
   // const posts = await postsApi.getAll();
   const posts = await prisma.post.findMany({
-    include: { author: true },
+    include: {
+      author: true,
+      _count: {
+        select: {
+          comments: true,
+        },
+      },
+    },
     orderBy: { createdAt: 'desc' },
   });
 
