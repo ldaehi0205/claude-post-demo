@@ -26,19 +26,15 @@ export function PostCard({ post, ids, selectPost }: PostCardProps) {
             isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
           }`}
         >
-          <div className="flex justify-between items-start">
-            <h2 className="text-lg font-semibold text-gray-900 flex-1">
+          <div className="flex justify-between items-center">
+            <h2 className="text-lg font-semibold text-gray-900 flex-1 truncate mr-4">
               {post.title}
             </h2>
-            {post._count && post._count.comments > 0 && (
-              <span className="ml-2 text-sm text-gray-500 whitespace-nowrap">
-                [{post._count.comments}]
-              </span>
-            )}
+            <span className="text-sm text-gray-400 whitespace-nowrap">
+              {post.author.name} / {new Date(post.createdAt).toLocaleDateString()}
+              {post._count && post._count.comments > 0 && ` [${post._count.comments}]`}
+            </span>
           </div>
-          <p className="text-sm text-gray-400 mt-2">
-            {post.author.name} / {new Date(post.createdAt).toLocaleDateString()}
-          </p>
         </div>
       </Link>
     </div>
