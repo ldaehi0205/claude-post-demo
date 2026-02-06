@@ -12,6 +12,14 @@ interface UploadResult {
 }
 
 export async function uploadImage(formData: FormData): Promise<UploadResult> {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !serviceKey || serviceKey === 'your-supabase-service-role-key') {
+    console.error('Supabase 환경 변수가 설정되지 않았습니다.');
+    return { success: false, error: 'Supabase 설정이 올바르지 않습니다. 환경 변수를 확인해주세요.' };
+  }
+
   const file = formData.get('image') as File | null;
 
   if (!file || file.size === 0) {
@@ -30,26 +38,31 @@ export async function uploadImage(formData: FormData): Promise<UploadResult> {
   const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${ext}`;
   const filePath = `posts/${fileName}`;
 
-  const arrayBuffer = await file.arrayBuffer();
-  const buffer = new Uint8Array(arrayBuffer);
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = new Uint8Array(arrayBuffer);
 
-  const { error } = await supabase.storage
-    .from(STORAGE_BUCKET)
-    .upload(filePath, buffer, {
-      contentType: file.type,
-      upsert: false,
-    });
+    const { error } = await supabase.storage
+      .from(STORAGE_BUCKET)
+      .upload(filePath, buffer, {
+        contentType: file.type,
+        upsert: false,
+      });
 
-  if (error) {
-    console.error('Supabase upload error:', error);
-    return { success: false, error: '이미지 업로드에 실패했습니다.' };
+    if (error) {
+      console.error('Supabase upload error:', error.message, error);
+      return { success: false, error: `이미지 업로드 실패: ${error.message}` };
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from(STORAGE_BUCKET)
+      .getPublicUrl(filePath);
+
+    return { success: true, url: publicUrlData.publicUrl };
+  } catch (err) {
+    console.error('Upload exception:', err);
+    return { success: false, error: '이미지 업로드 중 오류가 발생했습니다.' };
   }
-
-  const { data: publicUrlData } = supabase.storage
-    .from(STORAGE_BUCKET)
-    .getPublicUrl(filePath);
-
-  return { success: true, url: publicUrlData.publicUrl };
 }
 
 export async function deleteImage(imageUrl: string): Promise<{ success: boolean; error?: string }> {
