@@ -1,11 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Textarea } from '@/components/ui/Textarea';
-import { ImageUpload } from '@/components/ui/ImageUpload';
+import { MarkdownEditor } from '@/components/ui/MarkdownEditor';
 import { useAuth } from '@/hooks/useAuth';
 import { createPost, updatePost } from '@/app/actions/posts';
 import { Post } from '@/types/post';
@@ -18,22 +16,13 @@ export function PostForm({ post }: PostFormProps) {
   const router = useRouter();
   const { user } = useAuth();
   const isEdit = !!post;
-  const [removeImage, setRemoveImage] = useState(false);
 
   const handleSubmit = async (formData: FormData) => {
-    if (removeImage) {
-      formData.append('removeImage', 'true');
-    }
-
     if (isEdit) {
       await updatePost(formData, post.id);
     } else if (user) {
       await createPost(formData, user.id);
     }
-  };
-
-  const handleRemoveImage = () => {
-    setRemoveImage(true);
   };
 
   return (
@@ -44,21 +33,15 @@ export function PostForm({ post }: PostFormProps) {
         defaultValue={post?.title ?? ''}
         required
       />
-      <Textarea
-        name="content"
-        label="내용"
-        defaultValue={post?.content ?? ''}
-        rows={10}
-        required
-      />
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          이미지
+          내용
         </label>
-        <ImageUpload
-          name="image"
-          initialImageUrl={post?.imageUrl}
-          onRemoveImage={handleRemoveImage}
+        <MarkdownEditor
+          name="content"
+          defaultValue={post?.content ?? ''}
+          placeholder="마크다운으로 작성하세요. 이미지는 드래그앤드롭, 붙여넣기, 또는 툴바 버튼으로 업로드할 수 있습니다."
+          required
         />
       </div>
       <div className="flex gap-2">
