@@ -203,11 +203,7 @@ export function MarkdownEditor({
           />
         ) : (
           <div className="p-4 prose prose-sm max-w-none min-h-[400px] bg-white">
-            {content ? (
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
-            ) : (
-              <p className="text-gray-400">미리보기할 내용이 없습니다.</p>
-            )}
+            <MarkdownPreview content={content} />
           </div>
         )}
       </div>
