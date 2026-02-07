@@ -1,7 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { Button } from '@/components/ui/Button';
 import { usePost, useDeletePost } from '@/hooks/usePosts';
 import { useAuth } from '@/hooks/useAuth';
@@ -47,19 +48,23 @@ export function PostDetail({ id }: PostDetailProps) {
         <span>·</span>
         <span>{new Date(post.createdAt).toLocaleString()}</span>
       </div>
-      {post.imageUrl && (
-        <div className="mb-6">
-          <Image
-            src={post.imageUrl}
-            alt={post.title}
-            width={800}
-            height={600}
-            className="rounded-lg object-contain max-h-[500px] w-auto"
-          />
-        </div>
-      )}
-      <div className="prose max-w-none mb-8 whitespace-pre-wrap">
-        {post.content}
+      <div className="prose prose-lg max-w-none mb-8">
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          components={{
+            img: ({ src, alt }) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={src}
+                alt={alt || ''}
+                className="max-w-full h-auto rounded-lg"
+                loading="lazy"
+              />
+            ),
+          }}
+        >
+          {post.content}
+        </ReactMarkdown>
       </div>
       <div className="flex gap-2">
         {isAuthor && (
