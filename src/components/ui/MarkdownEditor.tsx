@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import dynamic from 'next/dynamic';
 import { uploadImage } from '@/app/actions/upload';
+
+const ReactMarkdown = dynamic(() => import('react-markdown'), { ssr: false });
+const remarkGfm = (await import('remark-gfm')).default;
 
 interface MarkdownEditorProps {
   name: string;
