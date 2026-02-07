@@ -7,10 +7,10 @@ import { usePost, useDeletePost } from '@/hooks/usePosts';
 import { useAuth } from '@/hooks/useAuth';
 import { CommentSection } from './comments/CommentSection';
 
-const MarkdownPreview = dynamic(
-  () => import('@/components/ui/MarkdownPreview').then((mod) => mod.MarkdownPreview),
-  { ssr: false, loading: () => <p className="text-gray-400">로딩 중...</p> }
-);
+const MarkdownPreview = dynamic(() => import('@/components/ui/MarkdownPreview'), {
+  ssr: false,
+  loading: () => <p className="text-gray-400">로딩 중...</p>,
+});
 
 interface PostDetailProps {
   id: number;
