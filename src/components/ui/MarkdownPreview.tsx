@@ -34,3 +34,6 @@ function MarkdownPreview({ content, className }: MarkdownPreviewProps) {
     </div>
   );
 }
+
+export { MarkdownPreview };
+export default MarkdownPreview;
