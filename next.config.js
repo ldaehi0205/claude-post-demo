@@ -8,18 +8,12 @@ const nextConfig = {
       },
     ],
   },
-  transpilePackages: [
-    'react-markdown',
-    'remark-gfm',
-    'remark-parse',
-    'remark-rehype',
-    'unified',
-    'unist-util-visit',
-    'micromark',
-    'micromark-util-combine-extensions',
-    'micromark-util-chunked',
-    'micromark-extension-gfm',
-  ],
+  experimental: {
+    serverComponentsExternalPackages: [
+      'react-markdown',
+      'remark-gfm',
+    ],
+  },
 }
 
 module.exports = nextConfig
