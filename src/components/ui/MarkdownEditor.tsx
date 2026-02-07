@@ -93,7 +93,8 @@ export function MarkdownEditor({
 
   const handlePaste = (e: React.ClipboardEvent) => {
     const items = e.clipboardData.items;
-    for (const item of items) {
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
       if (item.type.startsWith('image/')) {
         e.preventDefault();
         const file = item.getAsFile();
