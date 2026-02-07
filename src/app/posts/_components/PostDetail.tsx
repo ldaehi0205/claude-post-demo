@@ -52,24 +52,7 @@ export function PostDetail({ id }: PostDetailProps) {
         <span>·</span>
         <span>{new Date(post.createdAt).toLocaleString()}</span>
       </div>
-      <div className="prose prose-lg max-w-none mb-8">
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          components={{
-            img: ({ src, alt }) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={src}
-                alt={alt || ''}
-                className="max-w-full h-auto rounded-lg"
-                loading="lazy"
-              />
-            ),
-          }}
-        >
-          {post.content}
-        </ReactMarkdown>
-      </div>
+      <MarkdownPreview content={post.content} className="prose prose-lg max-w-none mb-8" />
       <div className="flex gap-2">
         {isAuthor && (
           <>
