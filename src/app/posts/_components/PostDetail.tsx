@@ -1,12 +1,16 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/Button';
 import { usePost, useDeletePost } from '@/hooks/usePosts';
 import { useAuth } from '@/hooks/useAuth';
 import { CommentSection } from './comments/CommentSection';
+
+const MarkdownPreview = dynamic(
+  () => import('@/components/ui/MarkdownPreview').then((mod) => mod.MarkdownPreview),
+  { ssr: false, loading: () => <p className="text-gray-400">로딩 중...</p> }
+);
 
 interface PostDetailProps {
   id: number;
