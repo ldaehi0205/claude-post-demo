@@ -8,7 +8,7 @@ interface MarkdownPreviewProps {
   className?: string;
 }
 
-export function MarkdownPreview({ content, className }: MarkdownPreviewProps) {
+function MarkdownPreview({ content, className }: MarkdownPreviewProps) {
   if (!content) {
     return <p className="text-gray-400">미리보기할 내용이 없습니다.</p>;
   }
