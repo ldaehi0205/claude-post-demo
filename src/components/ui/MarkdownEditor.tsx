@@ -4,8 +4,10 @@ import { useState, useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { uploadImage } from '@/app/actions/upload';
 
-const ReactMarkdown = dynamic(() => import('react-markdown'), { ssr: false });
-const remarkGfm = (await import('remark-gfm')).default;
+const MarkdownPreview = dynamic(
+  () => import('./MarkdownPreview').then((mod) => mod.MarkdownPreview),
+  { ssr: false, loading: () => <p className="text-gray-400">로딩 중...</p> }
+);
 
 interface MarkdownEditorProps {
   name: string;
