@@ -37,6 +37,14 @@
       "env": {
         "FIGMA_API_KEY": "${FIGMA_ACCESS_TOKEN}"
       }
+    },
+    "linear": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@tacticlaunch/mcp-linear"],
+      "env": {
+        "LINEAR_API_KEY": "${LINEAR_API_KEY}"
+      }
     }
   }
 }
