@@ -51,7 +51,10 @@ test.describe('전체 흐름 E2E 테스트', () => {
       await page.getByRole('button', { name: '로그인' }).click();
       await responsePromise;
 
-      // 에러 메시지 확인 또는 로그인 페이지에 머무는지 확인
+      // React 상태 업데이트 대기
+      await page.waitForTimeout(500);
+
+      // 로그인 페이지에 머무르고 에러 메시지 표시 확인
       await expect(page).toHaveURL(/\/login/);
       await expect(page.locator('p.text-red-500')).toBeVisible({ timeout: 5000 });
     });
