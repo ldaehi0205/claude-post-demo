@@ -43,10 +43,17 @@ test.describe('전체 흐름 E2E 테스트', () => {
 
       await fillInputByLabel(page, '아이디', 'wronguser');
       await fillInputByLabel(page, '비밀번호', 'wrongpassword');
-      await page.getByRole('button', { name: '로그인' }).click();
 
-      // 에러 메시지 확인 (로그인 API 응답 대기)
-      await expect(page.locator('p.text-red-500')).toBeVisible({ timeout: 10000 });
+      // 로그인 버튼 클릭 후 API 응답 대기
+      const responsePromise = page.waitForResponse(resp =>
+        resp.url().includes('/api/auth/login') && resp.status() === 401
+      );
+      await page.getByRole('button', { name: '로그인' }).click();
+      await responsePromise;
+
+      // 에러 메시지 확인 또는 로그인 페이지에 머무는지 확인
+      await expect(page).toHaveURL(/\/login/);
+      await expect(page.locator('p.text-red-500')).toBeVisible({ timeout: 5000 });
     });
 
     test('정상 로그인', async ({ page }) => {
