@@ -115,7 +115,7 @@ test.describe('전체 흐름 E2E 테스트', () => {
       await fillInputByLabel(page, '제목', title);
       await fillTextareaByLabel(page, '내용', content);
 
-      await page.getByRole('button', { name: '작성' }).click();
+      await page.locator('button[type="submit"]').click();
 
       // 작성 후 목록 페이지로 이동 확인
       await page.waitForURL(/\/posts$/, { timeout: 5000 });
