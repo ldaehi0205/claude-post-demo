@@ -141,7 +141,7 @@ test.describe('전체 흐름 E2E 테스트', () => {
       const originalTitle = `수정 테스트 ${Date.now()}`;
       await fillInputByLabel(page, '제목', originalTitle);
       await fillTextareaByLabel(page, '내용', '수정 테스트용 게시글');
-      await page.getByRole('button', { name: '작성' }).click();
+      await page.locator('button[type="submit"]').click();
       await page.waitForURL(/\/posts$/, { timeout: 5000 });
 
       // 작성한 게시글 클릭하여 상세 페이지 이동
@@ -170,7 +170,7 @@ test.describe('전체 흐름 E2E 테스트', () => {
       const title = `삭제 테스트 ${Date.now()}`;
       await fillInputByLabel(page, '제목', title);
       await fillTextareaByLabel(page, '내용', '삭제 테스트용 게시글');
-      await page.getByRole('button', { name: '작성' }).click();
+      await page.locator('button[type="submit"]').click();
       await page.waitForURL(/\/posts$/, { timeout: 5000 });
 
       // 작성한 게시글 클릭하여 상세 페이지 이동
@@ -202,14 +202,14 @@ test.describe('전체 흐름 E2E 테스트', () => {
       await page.goto('/posts/new');
       await fillInputByLabel(page, '제목', title1);
       await fillTextareaByLabel(page, '내용', '다중 삭제 테스트용 게시글 1');
-      await page.getByRole('button', { name: '작성' }).click();
+      await page.locator('button[type="submit"]').click();
       await page.waitForURL(/\/posts$/, { timeout: 5000 });
 
       // 두 번째 게시글 작성
       await page.goto('/posts/new');
       await fillInputByLabel(page, '제목', title2);
       await fillTextareaByLabel(page, '내용', '다중 삭제 테스트용 게시글 2');
-      await page.getByRole('button', { name: '작성' }).click();
+      await page.locator('button[type="submit"]').click();
       await page.waitForURL(/\/posts$/, { timeout: 5000 });
 
       // 게시글 목록에서 두 게시글 확인
@@ -322,7 +322,7 @@ test.describe('전체 흐름 E2E 테스트', () => {
 
       await fillInputByLabel(page, '제목', title);
       await fillTextareaByLabel(page, '내용', content);
-      await page.getByRole('button', { name: '작성' }).click();
+      await page.locator('button[type="submit"]').click();
 
       // 작성 후 목록 페이지로 이동 확인
       await page.waitForURL(/\/posts$/, { timeout: 10000 });
@@ -359,7 +359,7 @@ test.describe('전체 흐름 E2E 테스트', () => {
       // 미리보기 확인
       await expect(page.locator('img[alt="미리보기"]')).toBeVisible({ timeout: 5000 });
 
-      await page.getByRole('button', { name: '작성' }).click();
+      await page.locator('button[type="submit"]').click();
 
       // 작성 후 목록 페이지로 이동 확인 (타임아웃 증가 - 이미지 업로드 시간 고려)
       await page.waitForURL(/\/posts$/, { timeout: 30000 });
@@ -391,7 +391,7 @@ test.describe('전체 흐름 E2E 테스트', () => {
       });
 
       await expect(page.locator('img[alt="미리보기"]')).toBeVisible({ timeout: 5000 });
-      await page.getByRole('button', { name: '작성' }).click();
+      await page.locator('button[type="submit"]').click();
       await page.waitForURL(/\/posts$/, { timeout: 30000 });
 
       // 작성한 게시글 클릭하여 상세 페이지 이동
@@ -425,7 +425,7 @@ test.describe('전체 흐름 E2E 테스트', () => {
       });
 
       await expect(page.locator('img[alt="미리보기"]')).toBeVisible({ timeout: 5000 });
-      await page.getByRole('button', { name: '작성' }).click();
+      await page.locator('button[type="submit"]').click();
       await page.waitForURL(/\/posts$/, { timeout: 30000 });
 
       // 작성한 게시글 클릭하여 상세 페이지 이동
@@ -461,7 +461,7 @@ test.describe('전체 흐름 E2E 테스트', () => {
       const title = `댓글 테스트 게시글 ${Date.now()}`;
       await fillInputByLabel(page, '제목', title);
       await fillTextareaByLabel(page, '내용', '댓글 테스트를 위한 게시글입니다.');
-      await page.getByRole('button', { name: '작성' }).click();
+      await page.locator('button[type="submit"]').click();
       await page.waitForURL(/\/posts$/, { timeout: 5000 });
 
       // 작성한 게시글 클릭하여 상세 페이지 이동
