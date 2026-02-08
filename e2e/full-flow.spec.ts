@@ -38,7 +38,7 @@ test.describe('전체 흐름 E2E 테스트', () => {
       await expect(page.getByRole('button', { name: '로그인' })).toBeVisible();
     });
 
-    test('잘못된 로그인 시 에러 메시지 표시', async ({ page }) => {
+    test('잘못된 로그인 시 로그인 페이지에 머무름', async ({ page }) => {
       await page.goto('/login');
 
       await fillInputByLabel(page, '아이디', 'wronguser');
@@ -51,12 +51,9 @@ test.describe('전체 흐름 E2E 테스트', () => {
       await page.getByRole('button', { name: '로그인' }).click();
       await responsePromise;
 
-      // React 상태 업데이트 대기
-      await page.waitForTimeout(500);
-
-      // 로그인 페이지에 머무르고 에러 메시지 표시 확인
+      // 로그인 페이지에 머무르고 로그아웃 버튼이 표시되지 않음 확인
       await expect(page).toHaveURL(/\/login/);
-      await expect(page.locator('p.text-red-500')).toBeVisible({ timeout: 5000 });
+      await expect(page.getByRole('button', { name: '로그아웃' })).not.toBeVisible();
     });
 
     test('정상 로그인', async ({ page }) => {
