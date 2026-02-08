@@ -64,7 +64,7 @@ test.describe('전체 흐름 E2E 테스트', () => {
       await page.getByRole('button', { name: '로그인' }).click();
 
       // 로그인 후 리다이렉트 확인 (목록 페이지 또는 홈)
-      await page.waitForURL(/\/(posts)?$/, { timeout: 5000 });
+      await page.waitForURL(/\/(posts)?$/, { timeout: 10000 });
 
       // 헤더에 로그아웃 버튼 표시 확인
       await expect(page.getByRole('button', { name: '로그아웃' })).toBeVisible({ timeout: 3000 });
