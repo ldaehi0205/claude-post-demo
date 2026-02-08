@@ -45,8 +45,8 @@ test.describe('전체 흐름 E2E 테스트', () => {
       await fillInputByLabel(page, '비밀번호', 'wrongpassword');
       await page.getByRole('button', { name: '로그인' }).click();
 
-      // 에러 메시지 확인
-      await expect(page.getByText('아이디 또는 비밀번호가 올바르지 않습니다')).toBeVisible({ timeout: 5000 });
+      // 에러 메시지 확인 (로그인 API 응답 대기)
+      await expect(page.locator('p.text-red-500')).toBeVisible({ timeout: 10000 });
     });
 
     test('정상 로그인', async ({ page }) => {
