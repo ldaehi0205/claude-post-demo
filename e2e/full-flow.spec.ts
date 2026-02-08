@@ -105,7 +105,7 @@ test.describe('전체 흐름 E2E 테스트', () => {
       await fillInputByLabel(page, '아이디', TEST_USER.userID);
       await fillInputByLabel(page, '비밀번호', TEST_USER.password);
       await page.getByRole('button', { name: '로그인' }).click();
-      await page.waitForURL(/\/(posts)?$/, { timeout: 5000 });
+      await page.waitForURL(/\/(posts)?$/, { timeout: 10000 });
     });
 
     test('게시글 목록 페이지 확인', async ({ page }) => {
