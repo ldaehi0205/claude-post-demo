@@ -1,6 +1,6 @@
 ## 프로젝트 소개
 
-해당 프로젝트는 Claude AI를 활용하여 자동화 코드 생성을 위한 워크플로우를 설계하고 검증하는 리포지토리입니다.
+해당 프로젝트는 Claude AI를 활용하여 간단한 게시판 자동화 코드 생성을 위한 워크플로우를 설계하고 검증하는 리포지토리입니다.
 
 ## 기술 스택
 
@@ -48,32 +48,15 @@ LINEAR_API_KEY="your-linear-api-key"
 FIGMA_ACCESS_TOKEN="your-figma-access-token"
 ```
 
-## MCP (Model Context Protocol) 서버
+## MCP
 
 이 프로젝트는 Claude Code와 연동되는 MCP 서버들을 사용합니다. `.mcp.json`에 설정되어 있습니다.
 
-| MCP 서버 | 패키지 | 용도 |
-|----------|--------|------|
-| **playwright** | `@anthropic-ai/mcp-server-playwright` | 브라우저 E2E 테스트 자동화 |
-| **git** | `@modelcontextprotocol/server-git` | Git 저장소 조작 |
-| **filesystem** | `@modelcontextprotocol/server-filesystem` | 파일 시스템 접근 |
-| **context7** | `@upstash/context7-mcp` | 라이브러리 문서 검색 |
-| **figma** | `figma-developer-mcp` | Figma 디자인 파일 연동 |
-| **linear** | `@tacticlaunch/mcp-linear` | Linear 이슈 관리 연동 |
-
-### MCP 설정 예시
-
-```json
-{
-  "mcpServers": {
-    "linear": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "@tacticlaunch/mcp-linear"],
-      "env": {
-        "LINEAR_API_KEY": "${LINEAR_API_KEY}"
-      }
-    }
-  }
-}
-```
+| MCP 서버       | 패키지                                    | 용도                       |
+| -------------- | ----------------------------------------- | -------------------------- |
+| **playwright** | `@anthropic-ai/mcp-server-playwright`     | 브라우저 E2E 테스트 자동화 |
+| **git**        | `@modelcontextprotocol/server-git`        | Git 저장소 조작            |
+| **filesystem** | `@modelcontextprotocol/server-filesystem` | 파일 시스템 접근           |
+| **context7**   | `@upstash/context7-mcp`                   | 라이브러리 문서 검색       |
+| **figma**      | `figma-developer-mcp`                     | Figma 디자인 파일 연동     |
+| **linear**     | `@tacticlaunch/mcp-linear`                | Linear 이슈 관리 연동      |
