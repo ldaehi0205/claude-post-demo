@@ -253,10 +253,11 @@ test.describe('전체 흐름 E2E 테스트', () => {
     test('MarkdownEditor UI 확인', async ({ page }) => {
       await page.goto('/posts/new');
 
-      // MarkdownEditor 툴바 버튼 확인 (이미지 버튼은 title="이미지 업로드", 텍스트="이미지")
+      // MarkdownEditor 툴바 버튼 확인
       await expect(page.locator('button[title="이미지 업로드"]')).toBeVisible();
-      await expect(page.getByText('작성')).toBeVisible();
-      await expect(page.getByText('미리보기')).toBeVisible();
+      // 탭 버튼 (작성/미리보기) - type="button"이고 submit이 아닌 버튼
+      await expect(page.locator('button[type="button"]:has-text("작성")')).toBeVisible();
+      await expect(page.locator('button[type="button"]:has-text("미리보기")')).toBeVisible();
 
       // 마크다운 안내 문구 확인
       await expect(page.getByText('마크다운 문법을 지원합니다')).toBeVisible();
