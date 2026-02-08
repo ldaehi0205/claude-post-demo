@@ -239,7 +239,7 @@ test.describe('전체 흐름 E2E 테스트', () => {
     });
   });
 
-  test.describe('5. 이미지 업로드 테스트', () => {
+  test.describe('5. MarkdownEditor 테스트', () => {
     test.beforeEach(async ({ page }) => {
       // 로그인
       await page.goto('/login');
@@ -249,69 +249,32 @@ test.describe('전체 흐름 E2E 테스트', () => {
       await page.waitForURL(/\/(posts)?$/, { timeout: 5000 });
     });
 
-    test('이미지 업로드 UI 확인', async ({ page }) => {
+    test('MarkdownEditor UI 확인', async ({ page }) => {
       await page.goto('/posts/new');
 
-      // 이미지 업로드 영역 확인
-      await expect(page.getByText('이미지')).toBeVisible();
-      await expect(page.getByText('클릭하거나 이미지를 드래그하세요')).toBeVisible();
-      await expect(page.getByText('JPG, PNG, GIF, WebP (최대 5MB)')).toBeVisible();
+      // MarkdownEditor 툴바 버튼 확인
+      await expect(page.getByRole('button', { name: '이미지 업로드' })).toBeVisible();
+      await expect(page.getByText('작성')).toBeVisible();
+      await expect(page.getByText('미리보기')).toBeVisible();
+
+      // 마크다운 안내 문구 확인
+      await expect(page.getByText('마크다운 문법을 지원합니다')).toBeVisible();
     });
 
-    test('이미지 선택 시 미리보기 표시', async ({ page }) => {
+    test('마크다운 작성/미리보기 탭 전환', async ({ page }) => {
       await page.goto('/posts/new');
 
-      // 테스트용 이미지 파일 생성 (1x1 투명 PNG)
-      const buffer = Buffer.from(
-        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
-        'base64'
-      );
+      // 기본값은 작성 탭
+      const textarea = page.locator('textarea');
+      await expect(textarea).toBeVisible();
 
-      // 파일 선택
-      const fileChooserPromise = page.waitForEvent('filechooser');
-      await page.getByText('클릭하거나 이미지를 드래그하세요').click();
-      const fileChooser = await fileChooserPromise;
-      await fileChooser.setFiles({
-        name: 'test-image.png',
-        mimeType: 'image/png',
-        buffer: buffer,
-      });
+      // 미리보기 탭으로 전환
+      await page.getByRole('button', { name: '미리보기' }).click();
+      await expect(textarea).not.toBeVisible();
 
-      // 미리보기 이미지가 나타나는지 확인
-      await expect(page.locator('img[alt="미리보기"]')).toBeVisible({ timeout: 5000 });
-
-      // 삭제 버튼(X)이 나타나는지 확인
-      await expect(page.getByRole('button', { name: 'X' })).toBeVisible();
-    });
-
-    test('이미지 삭제 버튼 클릭 시 미리보기 제거', async ({ page }) => {
-      await page.goto('/posts/new');
-
-      // 테스트용 이미지 파일 생성
-      const buffer = Buffer.from(
-        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
-        'base64'
-      );
-
-      // 파일 선택
-      const fileChooserPromise = page.waitForEvent('filechooser');
-      await page.getByText('클릭하거나 이미지를 드래그하세요').click();
-      const fileChooser = await fileChooserPromise;
-      await fileChooser.setFiles({
-        name: 'test-image.png',
-        mimeType: 'image/png',
-        buffer: buffer,
-      });
-
-      // 미리보기 확인
-      await expect(page.locator('img[alt="미리보기"]')).toBeVisible({ timeout: 5000 });
-
-      // 삭제 버튼 클릭
-      await page.getByRole('button', { name: 'X' }).click();
-
-      // 미리보기가 사라지고 업로드 영역이 다시 나타나는지 확인
-      await expect(page.locator('img[alt="미리보기"]')).not.toBeVisible();
-      await expect(page.getByText('클릭하거나 이미지를 드래그하세요')).toBeVisible();
+      // 다시 작성 탭으로 전환
+      await page.locator('button:has-text("작성"):not([type="submit"])').click();
+      await expect(textarea).toBeVisible();
     });
 
     test('이미지 없이 게시글 작성 가능', async ({ page }) => {
@@ -331,102 +294,59 @@ test.describe('전체 흐름 E2E 테스트', () => {
       await expect(page.getByText(title)).toBeVisible({ timeout: 3000 });
     });
 
-    test('이미지와 함께 게시글 작성', async ({ page }) => {
+    test('마크다운 서식으로 게시글 작성', async ({ page }) => {
       await page.goto('/posts/new');
 
-      const title = `이미지 포함 게시글 ${Date.now()}`;
-      const content = '이미지와 함께 작성된 게시글입니다.';
+      const title = `마크다운 테스트 ${Date.now()}`;
+      const content = '# 제목\n\n**굵은 글씨** *기울임*\n\n- 목록 1\n- 목록 2';
 
       await fillInputByLabel(page, '제목', title);
       await fillTextareaByLabel(page, '내용', content);
 
-      // 테스트용 이미지 파일 생성
-      const buffer = Buffer.from(
-        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
-        'base64'
-      );
+      // 미리보기 탭에서 마크다운 렌더링 확인
+      await page.getByRole('button', { name: '미리보기' }).click();
+      await expect(page.locator('.prose h1')).toBeVisible({ timeout: 5000 });
 
-      // 파일 선택
-      const fileChooserPromise = page.waitForEvent('filechooser');
-      await page.getByText('클릭하거나 이미지를 드래그하세요').click();
-      const fileChooser = await fileChooserPromise;
-      await fileChooser.setFiles({
-        name: 'test-image.png',
-        mimeType: 'image/png',
-        buffer: buffer,
-      });
-
-      // 미리보기 확인
-      await expect(page.locator('img[alt="미리보기"]')).toBeVisible({ timeout: 5000 });
-
+      // 다시 작성 탭으로 돌아가서 제출
+      await page.locator('button:has-text("작성"):not([type="submit"])').click();
       await page.locator('button[type="submit"]').click();
 
-      // 작성 후 목록 페이지로 이동 확인 (타임아웃 증가 - 이미지 업로드 시간 고려)
-      await page.waitForURL(/\/posts$/, { timeout: 30000 });
+      // 작성 후 목록 페이지로 이동 확인
+      await page.waitForURL(/\/posts$/, { timeout: 10000 });
 
       // 목록에서 작성한 게시글 확인
-      await expect(page.getByText(title)).toBeVisible({ timeout: 5000 });
+      await expect(page.getByText(title)).toBeVisible({ timeout: 3000 });
     });
 
-    test('게시글 상세에서 이미지 표시 확인', async ({ page }) => {
-      // 이미지와 함께 게시글 작성
+    test('게시글 상세에서 마크다운 렌더링 확인', async ({ page }) => {
       await page.goto('/posts/new');
 
-      const title = `상세 이미지 테스트 ${Date.now()}`;
+      const title = `상세 마크다운 테스트 ${Date.now()}`;
+      const content = '## 소제목\n\n일반 텍스트입니다.\n\n```\nconst code = "코드 블록";\n```';
+
       await fillInputByLabel(page, '제목', title);
-      await fillTextareaByLabel(page, '내용', '이미지 표시 테스트');
-
-      const buffer = Buffer.from(
-        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
-        'base64'
-      );
-
-      const fileChooserPromise = page.waitForEvent('filechooser');
-      await page.getByText('클릭하거나 이미지를 드래그하세요').click();
-      const fileChooser = await fileChooserPromise;
-      await fileChooser.setFiles({
-        name: 'test-image.png',
-        mimeType: 'image/png',
-        buffer: buffer,
-      });
-
-      await expect(page.locator('img[alt="미리보기"]')).toBeVisible({ timeout: 5000 });
+      await fillTextareaByLabel(page, '내용', content);
       await page.locator('button[type="submit"]').click();
-      await page.waitForURL(/\/posts$/, { timeout: 30000 });
+      await page.waitForURL(/\/posts$/, { timeout: 10000 });
 
       // 작성한 게시글 클릭하여 상세 페이지 이동
       await page.getByText(title).click();
       await page.waitForURL(/\/posts\/\d+/, { timeout: 5000 });
 
-      // 상세 페이지에서 이미지가 표시되는지 확인
-      await expect(page.locator(`img[alt="${title}"]`)).toBeVisible({ timeout: 5000 });
+      // 상세 페이지에서 마크다운 렌더링 확인
+      await expect(page.locator('h2').filter({ hasText: '소제목' })).toBeVisible({ timeout: 5000 });
     });
 
-    test('게시글 수정 시 기존 이미지 표시', async ({ page }) => {
-      // 이미지와 함께 게시글 작성
+    test('게시글 수정 시 기존 내용 표시', async ({ page }) => {
       await page.goto('/posts/new');
 
-      const title = `수정 이미지 테스트 ${Date.now()}`;
+      const title = `수정 테스트 ${Date.now()}`;
+      const content = '수정 테스트용 **마크다운** 내용입니다.';
+
       await fillInputByLabel(page, '제목', title);
-      await fillTextareaByLabel(page, '내용', '이미지 수정 테스트');
-
-      const buffer = Buffer.from(
-        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
-        'base64'
-      );
-
-      const fileChooserPromise = page.waitForEvent('filechooser');
-      await page.getByText('클릭하거나 이미지를 드래그하세요').click();
-      const fileChooser = await fileChooserPromise;
-      await fileChooser.setFiles({
-        name: 'test-image.png',
-        mimeType: 'image/png',
-        buffer: buffer,
-      });
-
-      await expect(page.locator('img[alt="미리보기"]')).toBeVisible({ timeout: 5000 });
+      await fillTextareaByLabel(page, '내용', content);
       await page.locator('button[type="submit"]').click();
-      await page.waitForURL(/\/posts$/, { timeout: 30000 });
+      await page.waitForURL(/\/posts$/, { timeout: 10000 });
 
       // 작성한 게시글 클릭하여 상세 페이지 이동
       await page.getByText(title).click();
@@ -436,8 +356,9 @@ test.describe('전체 흐름 E2E 테스트', () => {
       await page.getByRole('button', { name: '수정' }).click();
       await page.waitForURL(/\/edit/, { timeout: 5000 });
 
-      // 수정 페이지에서 기존 이미지 미리보기가 표시되는지 확인
-      await expect(page.locator('img[alt="미리보기"]')).toBeVisible({ timeout: 5000 });
+      // 수정 페이지에서 기존 내용이 textarea에 표시되는지 확인
+      const textarea = page.locator('textarea');
+      await expect(textarea).toHaveValue(content, { timeout: 5000 });
     });
   });
 
