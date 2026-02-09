@@ -30,6 +30,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  console.log('[POST /api/posts] 게시글 작성 API 호출됨');
   const authHeader = request.headers.get('Authorization');
   const token = getTokenFromHeader(authHeader);
 
