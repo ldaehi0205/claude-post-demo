@@ -74,6 +74,17 @@ export async function POST(request: Request) {
     },
   });
 
+  // n8n webhook으로 새 게시글 알림 전송 (비동기, 실패해도 응답에 영향 없음)
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  notifyNewPost({
+    id: post.id,
+    title: post.title,
+    authorName: post.author.name,
+    authorId: post.author.userID,
+    createdAt: post.createdAt,
+    url: `${baseUrl}/posts/${post.id}`,
+  }).catch(() => {});
+
   return NextResponse.json(post, { status: 201 });
 }
 
