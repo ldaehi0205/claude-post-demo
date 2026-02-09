@@ -67,3 +67,10 @@ FIGMA_ACCESS_TOKEN="your-figma-access-token"
 게시글 작성 시 n8n webhook을 통해 Slack 알림을 전송합니다.
 
 자세한 설정 방법은 `.claude/skills/n8n-webhook/SKILL.md` 참고
+
+## Claude AI 개발
+
+이 프로젝트는 Claude Code를 활용한 AI 기반 개발을 지원합니다.
+
+- **AI 코드 생성 워크플로우**: `CLAUDE.md` 참고
+- **스킬 문서**: `.claude/skills/` 디렉토리
