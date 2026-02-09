@@ -162,6 +162,18 @@ post-root/
 - **파일 배치 규칙, 코드 규칙, 금지 사항**: `.claude/skills/review-code/SKILL.md`
 - **컴포넌트 규칙**: `.claude/skills/create-component/SKILL.md`
 - **API 명세, 인증 흐름, 토큰 정책**: `docs/API.md`
+- **n8n webhook 연동, Slack 알림 디버깅**: `.claude/skills/n8n-webhook/SKILL.md`
+
+### 주의: Server Action vs API Route
+
+Next.js App Router에서는 동일한 기능이 **두 곳**에서 구현될 수 있음:
+
+| 위치 | 파일 | 로그 확인 |
+|------|------|-----------|
+| Server Action | `src/app/actions/*.ts` | `POST /posts/new 303` |
+| API Route | `src/app/api/*/route.ts` | `POST /api/posts 201` |
+
+**새로운 기능 추가 시 실제로 사용되는 코드 경로를 먼저 확인할 것!**
 
 ## 참고 문서
 
