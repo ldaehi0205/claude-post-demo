@@ -65,6 +65,55 @@
 - DB: Supabase (PostgreSQL)
 - API 통신: Axios, TanStack Query
 - 인증: JWT (jsonwebtoken), bcrypt
+- 자동화: n8n (외부 워크플로우 연동)
+
+## n8n 자동화 연동
+
+### 새 게시글 알림
+
+게시글 작성 시 n8n webhook을 호출하여 Slack 등 외부 서비스로 알림을 전송합니다.
+
+**환경 변수:**
+```bash
+N8N_WEBHOOK_URL=""           # n8n Webhook URL
+NEXT_PUBLIC_BASE_URL=""      # 사이트 기본 URL (게시글 링크 생성용)
+```
+
+**n8n 워크플로우 설정:**
+
+1. n8n에서 새 워크플로우 생성
+2. `Webhook` 노드 추가 (POST 메서드)
+3. `Slack` 노드 추가하여 알림 전송
+4. Webhook URL을 `.env`의 `N8N_WEBHOOK_URL`에 설정
+
+**Webhook Payload 형식:**
+```json
+{
+  "event": "new_post",
+  "post": {
+    "id": 1,
+    "title": "게시글 제목",
+    "author": "작성자 이름",
+    "authorId": "user123",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "url": "https://your-domain.com/posts/1"
+  },
+  "timestamp": "2024-01-01T00:00:00.000Z"
+}
+```
+
+**Slack 메시지 템플릿 예시:**
+```
+📝 새 게시글이 등록되었습니다!
+
+*제목:* {{ $json.post.title }}
+*작성자:* {{ $json.post.author }}
+*링크:* {{ $json.post.url }}
+```
+
+**참고:**
+- webhook 호출 실패 시에도 게시글 작성은 정상 동작 (비동기 처리)
+- `N8N_WEBHOOK_URL`이 설정되지 않으면 알림 스킵
 
 ## 폴더 구조
 
@@ -113,6 +162,18 @@ post-root/
 - **파일 배치 규칙, 코드 규칙, 금지 사항**: `.claude/skills/review-code/SKILL.md`
 - **컴포넌트 규칙**: `.claude/skills/create-component/SKILL.md`
 - **API 명세, 인증 흐름, 토큰 정책**: `docs/API.md`
+- **n8n webhook 연동, Slack 알림 디버깅**: `.claude/skills/n8n-webhook/SKILL.md`
+
+### 주의: Server Action vs API Route
+
+Next.js App Router에서는 동일한 기능이 **두 곳**에서 구현될 수 있음:
+
+| 위치 | 파일 | 로그 확인 |
+|------|------|-----------|
+| Server Action | `src/app/actions/*.ts` | `POST /posts/new 303` |
+| API Route | `src/app/api/*/route.ts` | `POST /api/posts 201` |
+
+**새로운 기능 추가 시 실제로 사용되는 코드 경로를 먼저 확인할 것!**
 
 ## 참고 문서
 
@@ -123,6 +184,7 @@ post-root/
   - `review-code`: 코드 리뷰 체크리스트
   - `e2e-test`: E2E 테스트 시나리오
   - `db-migration`: Prisma 마이그레이션 절차
+  - `n8n-webhook`: n8n webhook 연동 및 Slack 알림 디버깅
 
 # 개발
 

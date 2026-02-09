@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/data/prisma';
 import { verifyToken, getTokenFromHeader } from '@/utils/jwt';
 import { CreatePostInput } from '@/types/post';
+import { notifyNewPost } from '@/utils/n8n';
 
 interface DeletePostsInput {
   ids: number[];
@@ -29,6 +30,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  console.log('[POST /api/posts] 게시글 작성 API 호출됨');
   const authHeader = request.headers.get('Authorization');
   const token = getTokenFromHeader(authHeader);
 
@@ -72,6 +74,17 @@ export async function POST(request: Request) {
       },
     },
   });
+
+  // n8n webhook으로 새 게시글 알림 전송 (비동기, 실패해도 응답에 영향 없음)
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  notifyNewPost({
+    id: post.id,
+    title: post.title,
+    authorName: post.author.name,
+    authorId: post.author.userID,
+    createdAt: post.createdAt,
+    url: `${baseUrl}/posts/${post.id}`,
+  }).catch(() => {});
 
   return NextResponse.json(post, { status: 201 });
 }
