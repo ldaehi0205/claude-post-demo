@@ -65,6 +65,55 @@
 - DB: Supabase (PostgreSQL)
 - API 통신: Axios, TanStack Query
 - 인증: JWT (jsonwebtoken), bcrypt
+- 자동화: n8n (외부 워크플로우 연동)
+
+## n8n 자동화 연동
+
+### 새 게시글 알림
+
+게시글 작성 시 n8n webhook을 호출하여 Slack 등 외부 서비스로 알림을 전송합니다.
+
+**환경 변수:**
+```bash
+N8N_WEBHOOK_URL=""           # n8n Webhook URL
+NEXT_PUBLIC_BASE_URL=""      # 사이트 기본 URL (게시글 링크 생성용)
+```
+
+**n8n 워크플로우 설정:**
+
+1. n8n에서 새 워크플로우 생성
+2. `Webhook` 노드 추가 (POST 메서드)
+3. `Slack` 노드 추가하여 알림 전송
+4. Webhook URL을 `.env`의 `N8N_WEBHOOK_URL`에 설정
+
+**Webhook Payload 형식:**
+```json
+{
+  "event": "new_post",
+  "post": {
+    "id": 1,
+    "title": "게시글 제목",
+    "author": "작성자 이름",
+    "authorId": "user123",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "url": "https://your-domain.com/posts/1"
+  },
+  "timestamp": "2024-01-01T00:00:00.000Z"
+}
+```
+
+**Slack 메시지 템플릿 예시:**
+```
+📝 새 게시글이 등록되었습니다!
+
+*제목:* {{ $json.post.title }}
+*작성자:* {{ $json.post.author }}
+*링크:* {{ $json.post.url }}
+```
+
+**참고:**
+- webhook 호출 실패 시에도 게시글 작성은 정상 동작 (비동기 처리)
+- `N8N_WEBHOOK_URL`이 설정되지 않으면 알림 스킵
 
 ## 폴더 구조
 
