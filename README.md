@@ -61,3 +61,43 @@ FIGMA_ACCESS_TOKEN="your-figma-access-token"
 | **figma**      | `figma-developer-mcp`                     | Figma 디자인 파일 연동       |
 | **linear**     | `@tacticlaunch/mcp-linear`                | Linear 이슈 관리 연동        |
 | **n8n**        | `n8n-mcp`                                 | n8n 워크플로우 노드 문서접근 |
+
+## n8n 자동화
+
+이 프로젝트는 n8n webhook을 통해 외부 서비스와 연동됩니다.
+
+### 새 게시글 Slack 알림
+
+게시글 작성 시 n8n webhook을 호출하여 Slack으로 알림을 전송합니다.
+
+```
+[게시글 작성] → [Server Action] → [notifyNewPost()] → [n8n Webhook] → [Slack]
+```
+
+### 환경 변수 설정
+
+```env
+# n8n Webhook URL (Production URL 사용)
+N8N_WEBHOOK_URL="https://your-n8n.app.n8n.cloud/webhook/xxx"
+
+# 게시글 링크 생성용 기본 URL
+NEXT_PUBLIC_BASE_URL="http://localhost:3000"
+```
+
+### n8n 워크플로우 설정
+
+1. [n8n.io](https://n8n.io)에서 새 워크플로우 생성
+2. **Webhook 노드** 추가 (HTTP Method: POST)
+3. **Slack 노드** 추가 및 연결
+4. 워크플로우 **Active** 토글 활성화
+5. **Production URL** 복사하여 `.env`에 설정
+
+> ⚠️ **주의**: Test URL(`/webhook-test/`)이 아닌 Production URL(`/webhook/`)을 사용해야 합니다.
+
+### 관련 파일
+
+| 파일 | 역할 |
+|------|------|
+| `src/utils/n8n.ts` | n8n webhook 호출 유틸 함수 |
+| `src/app/actions/posts.ts` | 게시글 Server Action (webhook 호출) |
+| `.claude/skills/n8n-webhook/SKILL.md` | 디버깅 가이드 |
