@@ -19,6 +19,9 @@ interface NewPostPayload {
 export async function notifyNewPost(payload: NewPostPayload): Promise<void> {
   const webhookUrl = process.env.N8N_WEBHOOK_URL;
 
+  console.log('[n8n] notifyNewPost 호출됨');
+  console.log('[n8n] webhookUrl:', webhookUrl);
+
   if (!webhookUrl) {
     console.log('[n8n] N8N_WEBHOOK_URL이 설정되지 않아 알림을 스킵합니다.');
     return;
