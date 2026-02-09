@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/data/prisma';
 import { verifyToken, getTokenFromHeader } from '@/utils/jwt';
 import { CreatePostInput } from '@/types/post';
+import { notifyNewPost } from '@/utils/n8n';
 
 interface DeletePostsInput {
   ids: number[];
