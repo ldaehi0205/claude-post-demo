@@ -31,6 +31,20 @@ async function fillTextareaByLabel(page: Page, _labelText: string, value: string
 }
 
 test.describe('전체 흐름 E2E 테스트', () => {
+  let testStartTime: Date;
+
+  test.beforeAll(async () => {
+    testStartTime = new Date();
+  });
+
+  test.afterAll(async () => {
+    // 테스트 중 생성된 게시글 일괄 삭제 (Comment는 onDelete: Cascade로 자동 삭제)
+    await prisma.post.deleteMany({
+      where: { createdAt: { gte: testStartTime } },
+    });
+    await prisma.$disconnect();
+  });
+
   test.describe('1. 로그인 테스트', () => {
     test('로그인 페이지 UI 확인', async ({ page }) => {
       await page.goto('/login');
