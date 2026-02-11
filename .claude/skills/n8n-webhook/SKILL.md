@@ -1,6 +1,6 @@
 ---
 name: n8n-webhook
-description: n8n webhook 연동 설정 및 디버깅을 수행합니다. Slack 알림이 안 오거나 webhook 호출 실패 시 사용합니다.
+description: n8n webhook 연동 설정 및 디버깅을 수행합니다. Slack 알림, AI 자동요약 webhook 호출 실패 시 사용합니다.
 ---
 
 # n8n Webhook 연동
