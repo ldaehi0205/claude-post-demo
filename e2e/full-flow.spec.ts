@@ -224,13 +224,13 @@ test.describe('전체 흐름 E2E 테스트', () => {
       await expect(page.getByText(title2)).toBeVisible({ timeout: 3000 });
 
       // 체크박스 선택 (두 게시글 모두)
-      // 구조: div.flex.items-start.gap-3 > input[checkbox] + Link > div > div > h2(title)
-      // 게시글 제목이 포함된 카드에서 체크박스 찾기
-      const card1 = page.locator('div.flex.items-start.gap-3').filter({ has: page.getByText(title1, { exact: true }) });
-      const card2 = page.locator('div.flex.items-start.gap-3').filter({ has: page.getByText(title2, { exact: true }) });
+      // 구조: table > tbody > tr > td(checkbox) + td(id) + td(title) + ...
+      // 게시글 제목이 포함된 테이블 행에서 체크박스 찾기
+      const row1 = page.locator('tbody tr').filter({ has: page.getByText(title1, { exact: true }) });
+      const row2 = page.locator('tbody tr').filter({ has: page.getByText(title2, { exact: true }) });
 
-      await card1.locator('input[type="checkbox"]').check();
-      await card2.locator('input[type="checkbox"]').check();
+      await row1.locator('input[type="checkbox"]').check();
+      await row2.locator('input[type="checkbox"]').check();
 
       // 다이얼로그 핸들러 설정
       page.on('dialog', dialog => dialog.accept());
