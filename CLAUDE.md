@@ -241,7 +241,8 @@ post-root/
 - **파일 배치 규칙, 코드 규칙, 금지 사항**: `.claude/skills/review-code/SKILL.md`
 - **컴포넌트 규칙**: `.claude/skills/create-component/SKILL.md`
 - **API 명세, 인증 흐름, 토큰 정책**: `docs/API.md`
-- **n8n webhook 연동, Slack 알림 디버깅**: `.claude/skills/n8n-webhook/SKILL.md`
+- **n8n Slack 새 게시글 알림**: `.claude/skills/n8n-slack-notify/SKILL.md`
+- **n8n AI 자동요약 연동**: `.claude/skills/n8n-ai-summary/SKILL.md`
 
 ### 주의: Server Action vs API Route
 
