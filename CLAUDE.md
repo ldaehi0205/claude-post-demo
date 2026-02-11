@@ -67,6 +67,7 @@ Kent Beck의 TDD(Test-Driven Development)와 Tidy First 원칙을 따른다.
 7. 문서화를 수행한다.
    - 추가·변경된 API 및 토큰 관련 사항은 `docs/API.md`에 작성한다.
    - 시스템 전반의 추가·변경 사항은 `CLAUDE.md` 파일에 작성 또는 수정한다.
+   - 변경, 추가된 개발 사항에 대한 체크리스트는 `.claude/skills/review-code/SKILL.md`에 작성 또는 수정한다.
 
 8. 로컬 검증 커맨드와 기대 결과를 제공한다.
    - 예: test / build / lint / typecheck
@@ -100,6 +101,7 @@ Kent Beck의 TDD(Test-Driven Development)와 Tidy First 원칙을 따른다.
 게시글 작성 시 n8n webhook을 호출하여 Slack 등 외부 서비스로 알림을 전송합니다.
 
 **환경 변수:**
+
 ```bash
 N8N_WEBHOOK_URL=""           # n8n Webhook URL
 NEXT_PUBLIC_BASE_URL=""      # 사이트 기본 URL (게시글 링크 생성용)
@@ -113,6 +115,7 @@ NEXT_PUBLIC_BASE_URL=""      # 사이트 기본 URL (게시글 링크 생성용)
 4. Webhook URL을 `.env`의 `N8N_WEBHOOK_URL`에 설정
 
 **Webhook Payload 형식:**
+
 ```json
 {
   "event": "new_post",
@@ -129,6 +132,7 @@ NEXT_PUBLIC_BASE_URL=""      # 사이트 기본 URL (게시글 링크 생성용)
 ```
 
 **Slack 메시지 템플릿 예시:**
+
 ```
 📝 새 게시글이 등록되었습니다!
 
@@ -138,6 +142,7 @@ NEXT_PUBLIC_BASE_URL=""      # 사이트 기본 URL (게시글 링크 생성용)
 ```
 
 **참고:**
+
 - webhook 호출 실패 시에도 게시글 작성은 정상 동작 (비동기 처리)
 - `N8N_WEBHOOK_URL`이 설정되지 않으면 알림 스킵
 
@@ -194,10 +199,10 @@ post-root/
 
 Next.js App Router에서는 동일한 기능이 **두 곳**에서 구현될 수 있음:
 
-| 위치 | 파일 | 로그 확인 |
-|------|------|-----------|
-| Server Action | `src/app/actions/*.ts` | `POST /posts/new 303` |
-| API Route | `src/app/api/*/route.ts` | `POST /api/posts 201` |
+| 위치          | 파일                     | 로그 확인             |
+| ------------- | ------------------------ | --------------------- |
+| Server Action | `src/app/actions/*.ts`   | `POST /posts/new 303` |
+| API Route     | `src/app/api/*/route.ts` | `POST /api/posts 201` |
 
 **새로운 기능 추가 시 실제로 사용되는 코드 경로를 먼저 확인할 것!**
 
@@ -258,6 +263,7 @@ AI가 작업 완료 후 자동으로 커밋을 수행한다.
 | chore | 빌드 설정, 패키지 매니저 설정 등 |
 
 **예시:**
+
 ```
 feat: 게시글 이미지 업로드 기능 추가
 
@@ -302,12 +308,12 @@ rm -rf .next node_modules/.cache && npm run dev
 
 ### 주요 오류와 해결법
 
-| 오류 메시지 | 원인 | 해결 |
-|------------|------|------|
-| `missing required error components` | error.tsx/global-error.tsx 누락 또는 캐시 | 파일 생성 + 캐시 삭제 |
-| `__webpack_modules__[moduleId] is not a function` | transpilePackages 설정 충돌 | `serverComponentsExternalPackages` 사용 + 캐시 삭제 |
-| `Loading chunk failed (undefined)` | dynamic import 경로 해석 실패 | default export 사용 + 캐시 삭제 |
-| `Cannot read properties of null (reading 'useContext')` | React context 초기화 실패 | 캐시 삭제 + 서버 재시작 |
+| 오류 메시지                                             | 원인                                      | 해결                                                |
+| ------------------------------------------------------- | ----------------------------------------- | --------------------------------------------------- |
+| `missing required error components`                     | error.tsx/global-error.tsx 누락 또는 캐시 | 파일 생성 + 캐시 삭제                               |
+| `__webpack_modules__[moduleId] is not a function`       | transpilePackages 설정 충돌               | `serverComponentsExternalPackages` 사용 + 캐시 삭제 |
+| `Loading chunk failed (undefined)`                      | dynamic import 경로 해석 실패             | default export 사용 + 캐시 삭제                     |
+| `Cannot read properties of null (reading 'useContext')` | React context 초기화 실패                 | 캐시 삭제 + 서버 재시작                             |
 
 ### ESM 모듈 사용 시 권장 설정
 
@@ -319,7 +325,7 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['react-markdown', 'remark-gfm'],
   },
-}
+};
 ```
 
 ```typescript
