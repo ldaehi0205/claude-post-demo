@@ -48,13 +48,13 @@ export function PostCard({ post, ids, selectPost }: PostCardProps) {
           <p className="text-xs text-gray-400 mt-1 truncate">{post.summary}</p>
         )}
       </td>
-      <td className="py-3 px-4 text-center text-sm text-gray-500">
+      <td className="py-3 px-4 text-center text-sm text-gray-500 whitespace-nowrap">
         {post.author.name}
       </td>
-      <td className="py-3 px-4 text-center text-sm text-gray-400">
+      <td className="py-3 px-4 text-center text-sm text-gray-400 whitespace-nowrap">
         {formatDate(post.createdAt)}
       </td>
-      <td className="py-3 px-2 text-center text-sm text-gray-400">
+      <td className="py-3 px-2 text-center text-sm text-gray-400 whitespace-nowrap">
         {post._count?.comments ?? 0}
       </td>
     </tr>
