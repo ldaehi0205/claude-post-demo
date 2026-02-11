@@ -84,6 +84,34 @@ FIGMA_ACCESS_TOKEN="your-figma-access-token"
 
 ## n8n 자동화
 
-게시글 작성 시 n8n webhook을 통해 Slack 알림을 전송합니다.
+n8n webhook을 통해 두 가지 자동화 기능을 제공합니다.
 
-자세한 설정 방법은 `.claude/skills/n8n-webhook/SKILL.md` 참고
+### 1. Slack 새 게시글 알림
+
+게시글 작성 시 n8n webhook → Slack 채널로 알림을 전송합니다.
+
+```
+[게시글 작성] → [Server Action] → [notifyNewPost()] → [n8n Webhook] → [Slack]
+```
+
+- webhook 호출 실패 시에도 게시글 작성은 정상 동작 (비동기)
+- `N8N_WEBHOOK_URL` 미설정 시 알림 스킵
+- 상세 설정: `.claude/skills/n8n-slack-notify/SKILL.md`
+
+### 2. AI 게시글 자동요약
+
+게시글 첫 조회 시 n8n webhook → OpenAI로 요약을 생성하고, 콜백 API로 DB에 저장합니다.
+
+```
+[게시글 조회] → [GET /api/posts/:id/summary]
+                  → summary가 null이면 n8n webhook 호출 (비동기)
+                  → n8n: OpenAI 요약 생성
+                  → PATCH /api/posts/:id/summary 콜백으로 DB 저장
+                  → 클라이언트 5초 폴링으로 요약 수신
+```
+
+- **Lazy Evaluation**: 작성 시가 아닌 첫 조회 시 요약 생성
+- **API 분리**: 게시글 조회(`/api/posts/:id`)와 요약 폴링(`/api/posts/:id/summary`)을 분리하여 조회수 증가 방지
+- 게시글 수정 시 기존 요약을 초기화하고 다음 조회 시 자동 재생성
+- `N8N_SUMMARY_WEBHOOK_URL` 미설정 시 요약 생성 스킵
+- 상세 설정: `.claude/skills/n8n-ai-summary/SKILL.md`
