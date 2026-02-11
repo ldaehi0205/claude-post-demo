@@ -63,3 +63,46 @@ export async function notifyNewPost(payload: NewPostPayload): Promise<void> {
     console.error('[n8n] Webhook 호출 중 오류:', error);
   }
 }
+
+/**
+ * n8n webhook으로 AI 요약 생성을 요청합니다.
+ * n8n에서 OpenAI로 요약 생성 후 callbackUrl로 결과를 전송합니다.
+ * webhook 호출 실패 시에도 에러를 throw하지 않고 로그만 남깁니다.
+ */
+export async function requestAISummary(payload: AISummaryPayload): Promise<void> {
+  const webhookUrl = process.env.N8N_SUMMARY_WEBHOOK_URL;
+
+  console.log('[n8n] requestAISummary 호출됨');
+
+  if (!webhookUrl) {
+    console.log('[n8n] N8N_SUMMARY_WEBHOOK_URL이 설정되지 않아 요약 생성을 스킵합니다.');
+    return;
+  }
+
+  try {
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        event: 'summarize_post',
+        post: {
+          id: payload.id,
+          title: payload.title,
+          content: payload.content,
+          callbackUrl: payload.callbackUrl,
+        },
+        timestamp: new Date().toISOString(),
+      }),
+    });
+
+    if (!response.ok) {
+      console.error(`[n8n] AI 요약 요청 실패: ${response.status} ${response.statusText}`);
+    } else {
+      console.log(`[n8n] AI 요약 요청 전송 완료: postId=${payload.id}`);
+    }
+  } catch (error) {
+    console.error('[n8n] AI 요약 요청 중 오류:', error);
+  }
+}
