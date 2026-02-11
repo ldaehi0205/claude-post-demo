@@ -46,6 +46,7 @@ export function PostList({ posts }: PostListProps) {
             <th className="py-3 px-4 text-left">제목</th>
             <th className="py-3 px-4 w-28 text-center">작성자</th>
             <th className="py-3 px-4 w-32 text-center">작성일</th>
+            <th className="py-3 px-2 w-16 text-center">조회</th>
             <th className="py-3 px-2 w-16 text-center">댓글</th>
           </tr>
         </thead>
