@@ -3,6 +3,13 @@
  * 게시글 작성 시 Slack 등 외부 서비스로 알림을 전송합니다.
  */
 
+interface AISummaryPayload {
+  id: number;
+  title: string;
+  content: string;
+  callbackUrl: string;
+}
+
 interface NewPostPayload {
   id: number;
   title: string;
