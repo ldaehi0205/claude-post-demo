@@ -55,6 +55,9 @@ export function PostCard({ post, ids, selectPost }: PostCardProps) {
         {formatDate(post.createdAt)}
       </td>
       <td className="py-3 px-2 text-center text-sm text-gray-400 whitespace-nowrap">
+        {post.viewCount}
+      </td>
+      <td className="py-3 px-2 text-center text-sm text-gray-400 whitespace-nowrap">
         {post._count?.comments ?? 0}
       </td>
     </tr>
