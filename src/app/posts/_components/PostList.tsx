@@ -33,7 +33,7 @@ export function PostList({ posts }: PostListProps) {
       </div>
       <table className="w-full border-collapse">
         <thead>
-          <tr className="border-b-2 border-gray-200 text-sm text-gray-500">
+          <tr className="border-b-2 border-gray-200 text-sm text-gray-500 whitespace-nowrap">
             <th className="py-3 px-2 w-10 text-center">
               <input
                 type="checkbox"
