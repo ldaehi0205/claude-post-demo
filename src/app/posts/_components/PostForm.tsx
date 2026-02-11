@@ -45,12 +45,22 @@ export function PostForm({ post }: PostFormProps) {
           required
         />
       </div>
-      <div className="flex gap-2">
-        <Button type="submit">{isEdit ? '수정' : '작성'}</Button>
-        <Button type="button" variant="secondary" onClick={() => router.back()}>
-          취소
-        </Button>
-      </div>
+      <SubmitButtons isEdit={isEdit} onCancel={() => router.back()} />
     </form>
+  );
+}
+
+function SubmitButtons({ isEdit, onCancel }: { isEdit: boolean; onCancel: () => void }) {
+  const { pending } = useFormStatus();
+
+  return (
+    <div className="flex gap-2">
+      <Button type="submit" disabled={pending}>
+        {pending ? '처리 중...' : isEdit ? '수정' : '작성'}
+      </Button>
+      <Button type="button" variant="secondary" onClick={onCancel} disabled={pending}>
+        취소
+      </Button>
+    </div>
   );
 }
