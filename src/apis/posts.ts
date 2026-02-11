@@ -30,6 +30,13 @@ export const postsApi = {
     return data;
   },
 
+  getSummary: async (id: number): Promise<{ summary: string | null }> => {
+    const { data } = await api.get<{ summary: string | null }>(
+      `http://localhost:3000/api/posts/${id}/summary`,
+    );
+    return data;
+  },
+
   delete: async (ids: number[]): Promise<void> => {
     await api.delete('http://localhost:3000/api/posts', { data: { ids } });
   },
