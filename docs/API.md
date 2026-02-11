@@ -373,6 +373,46 @@ Access Token 갱신
 | 403    | forbidden     | 수정 권한이 없습니다  |
 | 404    | not_found     | 게시글을 찾을 수 없음 |
 
+### PATCH /posts/:id/summary
+
+게시글 AI 요약 저장 (n8n 콜백 전용)
+
+**Headers**
+
+| 헤더              | 필수 | 설명                  |
+| ----------------- | ---- | --------------------- |
+| x-callback-secret | O    | n8n 콜백 인증 시크릿  |
+
+**Path Parameters**
+
+| 파라미터 | 타입   | 설명      |
+| -------- | ------ | --------- |
+| id       | number | 게시글 ID |
+
+**Request Body**
+
+| 필드    | 타입   | 필수 | 설명           |
+| ------- | ------ | ---- | -------------- |
+| summary | string | O    | AI 생성 요약문 |
+
+**Response 200**
+
+```json
+{
+  "message": "요약이 저장되었습니다.",
+  "postId": 1,
+  "summary": "이 게시글은 JavaScript의 변수 선언 방식인 var, let, const의 차이를 설명합니다."
+}
+```
+
+**Error Response**
+
+| status | code          | 설명                  |
+| ------ | ------------- | --------------------- |
+| 400    | bad_request   | 유효하지 않은 요청    |
+| 401    | authorization | 콜백 인증 실패        |
+| 404    | not_found     | 게시글을 찾을 수 없음 |
+
 ---
 
 ## 댓글 API
