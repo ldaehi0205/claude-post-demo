@@ -51,6 +51,8 @@ export function PostDetail({ id }: PostDetailProps) {
         <span>{post.author?.name}</span>
         <span>·</span>
         <span>{new Date(post.createdAt).toLocaleString()}</span>
+        <span>·</span>
+        <span>조회 {post.viewCount}</span>
       </div>
       {post.summary ? (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
