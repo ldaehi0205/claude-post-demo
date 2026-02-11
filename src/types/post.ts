@@ -6,6 +6,7 @@ export interface Post {
   content: string;
   summary: string | null;
   imageUrl: string | null;
+  viewCount: number;
   createdAt: Date;
   updatedAt: Date;
   authorId: number;
