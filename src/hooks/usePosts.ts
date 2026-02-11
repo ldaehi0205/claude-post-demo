@@ -21,10 +21,18 @@ export function usePost(id: number) {
     queryKey: [...POSTS_KEY, id],
     queryFn: () => postsApi.getById(id),
     enabled: !!id,
+  });
+}
+
+/** 게시글 요약 조회 훅 (summary가 없으면 5초마다 폴링) */
+export function usePostSummary(id: number) {
+  return useQuery({
+    queryKey: [...POSTS_KEY, id, 'summary'],
+    queryFn: () => postsApi.getSummary(id),
+    enabled: !!id,
     refetchInterval: (query) => {
-      const post = query.state.data;
-      // summary가 없으면 5초마다 재조회, 있으면 폴링 중지
-      return post && !post.summary ? 5000 : false;
+      const data = query.state.data;
+      return data && !data.summary ? 5000 : false;
     },
   });
 }
