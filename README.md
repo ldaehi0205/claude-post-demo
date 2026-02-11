@@ -46,11 +46,24 @@ npm run dev
 `.env` 파일을 생성하고 아래 내용을 설정하세요:
 
 ```env
+# DB
 DATABASE_URL="postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres"
+
+# 인증
 JWT_SECRET="your-jwt-secret-key"
+
+# Supabase
 NEXT_PUBLIC_SUPABASE_URL="https://[PROJECT-REF].supabase.co"
 NEXT_PUBLIC_SUPABASE_ANON_KEY="your-supabase-anon-key"
 SUPABASE_SERVICE_ROLE_KEY="your-supabase-service-role-key"
+
+# n8n 자동화
+N8N_WEBHOOK_URL=""              # Slack 새 게시글 알림 webhook URL
+N8N_SUMMARY_WEBHOOK_URL=""      # AI 자동요약 webhook URL
+N8N_CALLBACK_SECRET=""          # AI 요약 콜백 인증 시크릿
+NEXT_PUBLIC_BASE_URL=""         # 사이트 기본 URL (로컬: ngrok URL / 배포: 실제 도메인)
+
+# 외부 도구 (선택)
 LINEAR_API_KEY="your-linear-api-key"
 FIGMA_ACCESS_TOKEN="your-figma-access-token"
 ```
