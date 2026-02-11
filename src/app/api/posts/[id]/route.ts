@@ -29,6 +29,12 @@ export async function GET(request: Request, { params }: Params) {
     );
   }
 
+  // 조회수 증가 (비동기, 응답 지연 없음)
+  prisma.post.update({
+    where: { id: post.id },
+    data: { viewCount: { increment: 1 } },
+  }).catch(() => {});
+
   // summary가 없으면 AI 요약 생성 요청 (비동기, 실패해도 응답에 영향 없음)
   if (!post.summary) {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
@@ -40,7 +46,7 @@ export async function GET(request: Request, { params }: Params) {
     }).catch(() => {});
   }
 
-  return NextResponse.json(post);
+  return NextResponse.json({ ...post, viewCount: post.viewCount + 1 });
 }
 
 export async function PUT(request: Request, { params }: Params) {
