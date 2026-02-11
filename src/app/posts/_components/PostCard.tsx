@@ -44,6 +44,9 @@ export function PostCard({ post, ids, selectPost }: PostCardProps) {
         >
           {post.title}
         </Link>
+        {post.summary && (
+          <p className="text-xs text-gray-400 mt-1 truncate">{post.summary}</p>
+        )}
       </td>
       <td className="py-3 px-4 text-center text-sm text-gray-500">
         {post.author.name}
