@@ -1,4 +1,7 @@
 import { test, expect, Page } from '@playwright/test';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 const TEST_USER = {
   userID: 'testuser',
