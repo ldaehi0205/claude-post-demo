@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/data/prisma';
 import { verifyToken, getTokenFromHeader } from '@/utils/jwt';
 import { UpdatePostInput } from '@/types/post';
-import { requestAISummary } from '@/utils/n8n';
 
 interface Params {
   params: { id: string };
