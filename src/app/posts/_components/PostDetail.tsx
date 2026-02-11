@@ -19,8 +19,11 @@ interface PostDetailProps {
 export function PostDetail({ id }: PostDetailProps) {
   const router = useRouter();
   const { data: post, isLoading, error } = usePost(id);
+  const { data: summaryData } = usePostSummary(id);
   const deletePost = useDeletePost();
   const { user } = useAuth();
+
+  const summary = summaryData?.summary ?? post?.summary ?? null;
 
   const isAuthor = user && post && user.id === post.authorId;
 
