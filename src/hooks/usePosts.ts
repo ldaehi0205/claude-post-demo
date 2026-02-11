@@ -21,6 +21,11 @@ export function usePost(id: number) {
     queryKey: [...POSTS_KEY, id],
     queryFn: () => postsApi.getById(id),
     enabled: !!id,
+    refetchInterval: (query) => {
+      const post = query.state.data;
+      // summary가 없으면 5초마다 재조회, 있으면 폴링 중지
+      return post && !post.summary ? 5000 : false;
+    },
   });
 }
 
