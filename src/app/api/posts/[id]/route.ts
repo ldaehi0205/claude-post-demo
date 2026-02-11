@@ -29,6 +29,17 @@ export async function GET(request: Request, { params }: Params) {
     );
   }
 
+  // summary가 없으면 AI 요약 생성 요청 (비동기, 실패해도 응답에 영향 없음)
+  if (!post.summary) {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    requestAISummary({
+      id: post.id,
+      title: post.title,
+      content: post.content,
+      callbackUrl: `${baseUrl}/api/posts/${post.id}/summary`,
+    }).catch(() => {});
+  }
+
   return NextResponse.json(post);
 }
 
