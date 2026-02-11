@@ -9,6 +9,14 @@ interface PostCardProps {
   selectPost: (id: number) => void;
 }
 
+function formatDate(date: Date | string): string {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}.${month}.${day}`;
+}
+
 export function PostCard({ post, ids, selectPost }: PostCardProps) {
   const isSelected = ids.includes(post.id);
 
@@ -41,7 +49,7 @@ export function PostCard({ post, ids, selectPost }: PostCardProps) {
         {post.author.name}
       </td>
       <td className="py-3 px-4 text-center text-sm text-gray-400">
-        {new Date(post.createdAt).toLocaleDateString()}
+        {formatDate(post.createdAt)}
       </td>
       <td className="py-3 px-2 text-center text-sm text-gray-400">
         {post._count?.comments ?? 0}
