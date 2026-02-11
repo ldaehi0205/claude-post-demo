@@ -86,14 +86,6 @@ export async function POST(request: Request) {
     url: `${baseUrl}/posts/${post.id}`,
   }).catch(() => {});
 
-  // n8n webhook으로 AI 요약 생성 요청
-  requestAISummary({
-    id: post.id,
-    title: post.title,
-    content: post.content,
-    callbackUrl: `${baseUrl}/api/posts/${post.id}/summary`,
-  }).catch(() => {});
-
   return NextResponse.json(post, { status: 201 });
 }
 
