@@ -264,7 +264,8 @@ Next.js App Router에서는 동일한 기능이 **두 곳**에서 구현될 수 
   - `review-code`: 코드 리뷰 체크리스트
   - `e2e-test`: E2E 테스트 시나리오
   - `db-migration`: Prisma 마이그레이션 절차
-  - `n8n-webhook`: n8n webhook 연동 및 Slack 알림 디버깅
+  - `n8n-slack-notify`: n8n Slack 새 게시글 알림 연동 및 디버깅
+  - `n8n-ai-summary`: n8n + OpenAI AI 자동요약 연동 및 디버깅
 
 # 개발
 
