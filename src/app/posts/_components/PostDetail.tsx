@@ -57,10 +57,10 @@ export function PostDetail({ id }: PostDetailProps) {
         <span>·</span>
         <span>조회 {post.viewCount}</span>
       </div>
-      {post.summary ? (
+      {summary ? (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
           <span className="text-sm font-medium text-blue-700 block mb-1">AI 요약</span>
-          <p className="text-sm text-blue-900 leading-relaxed">{post.summary}</p>
+          <p className="text-sm text-blue-900 leading-relaxed">{summary}</p>
         </div>
       ) : (
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
