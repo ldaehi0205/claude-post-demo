@@ -28,10 +28,10 @@ export function PostList({ posts }: PostListProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="self-end">
+      <div className="flex justify-end">
         <DeleteButton ids={ids} clearSelectPost={clearSelectPost} />
       </div>
-      <table className="w-full border-collapse">
+      <table className="w-full table-fixed border-collapse">
         <thead>
           <tr className="border-b-2 border-gray-200 text-sm text-gray-500 whitespace-nowrap">
             <th className="py-3 px-2 w-10 text-center">
