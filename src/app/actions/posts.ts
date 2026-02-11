@@ -37,14 +37,6 @@ export async function createPost(formData: FormData, authorId: number) {
     url: `${baseUrl}/posts/${post.id}`,
   }).catch(() => {});
 
-  // n8n webhook으로 AI 요약 생성 요청
-  requestAISummary({
-    id: post.id,
-    title: post.title,
-    content: post.content,
-    callbackUrl: `${baseUrl}/api/posts/${post.id}/summary`,
-  }).catch(() => {});
-
   revalidatePath('/posts');
   redirect('/posts');
 }
@@ -62,15 +54,6 @@ export async function updatePost(formData: FormData, postId: number) {
       summary: null,
     },
   });
-
-  // 수정된 내용으로 AI 요약 재생성 요청
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-  requestAISummary({
-    id: postId,
-    title,
-    content,
-    callbackUrl: `${baseUrl}/api/posts/${postId}/summary`,
-  }).catch(() => {});
 
   revalidatePath('/posts');
   revalidatePath(`/posts/${postId}`);
