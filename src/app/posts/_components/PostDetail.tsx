@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/Button';
-import { usePost, useDeletePost } from '@/hooks/usePosts';
+import { usePost, usePostSummary, useDeletePost } from '@/hooks/usePosts';
 import { useAuth } from '@/hooks/useAuth';
 import { CommentSection } from './comments/CommentSection';
 
