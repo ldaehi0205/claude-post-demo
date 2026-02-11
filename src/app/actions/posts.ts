@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/data/prisma';
-import { notifyNewPost, requestAISummary } from '@/utils/n8n';
+import { notifyNewPost } from '@/utils/n8n';
 
 /** 게시글 작성 서버 액션 */
 export async function createPost(formData: FormData, authorId: number) {
