@@ -7,12 +7,12 @@
  * 3. localhost:3000 (로컬 개발 폴백)
  */
 export function getBaseUrl(): string {
-  if (window.location.origin.includes('vercel') && process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
-  }
-
   if (process.env.NEXT_PUBLIC_BASE_URL) {
     return process.env.NEXT_PUBLIC_BASE_URL;
+  }
+
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
   }
 
   return 'http://localhost:3000';
