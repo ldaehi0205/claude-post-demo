@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/data/prisma';
 import { requestAISummary } from '@/utils/n8n';
+import { getBaseUrl } from '@/utils/url';
 
 interface Params {
   params: { id: string };
