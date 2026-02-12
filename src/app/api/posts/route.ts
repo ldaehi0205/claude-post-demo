@@ -3,6 +3,7 @@ import { prisma } from '@/data/prisma';
 import { verifyToken, getTokenFromHeader } from '@/utils/jwt';
 import { CreatePostInput } from '@/types/post';
 import { notifyNewPost } from '@/utils/n8n';
+import { getBaseUrl } from '@/utils/url';
 
 interface DeletePostsInput {
   ids: number[];
