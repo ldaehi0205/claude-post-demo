@@ -83,7 +83,7 @@ export async function POST(request: Request) {
     authorName: post.author.name,
     authorId: post.author.userID,
     createdAt: post.createdAt,
-    url: `${baseUrl}/posts/${post.id}`,
+    url: `${getBaseUrl()}/posts/${post.id}`,
   }).catch(() => {});
 
   return NextResponse.json(post, { status: 201 });
