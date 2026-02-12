@@ -28,14 +28,13 @@ export async function createPost(formData: FormData, authorId: number) {
   });
 
   // n8n webhook으로 새 게시글 알림 전송
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   notifyNewPost({
     id: post.id,
     title: post.title,
     authorName: post.author.name,
     authorId: post.author.userID,
     createdAt: post.createdAt,
-    url: `${baseUrl}/posts/${post.id}`,
+    url: `${getBaseUrl()}/posts/${post.id}`,
   }).catch(() => {});
 
   revalidatePath('/posts');
