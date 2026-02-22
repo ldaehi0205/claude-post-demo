@@ -20,6 +20,17 @@ description: Kent Beck의 TDD와 Tidy First 원칙에 따라 코드를 작성합
 
 # TDD & Tidy First 워크플로우
 
+## 테스트 도구
+
+| 종류 | 도구 | 용도 |
+|------|------|------|
+| 유닛 테스트 | Jest / Vitest | 개별 함수, 유틸, 훅 등 단위 검증 |
+| 통합 테스트 | Jest / Vitest | API Route, 서비스 레이어 등 모듈 간 연동 검증 |
+| E2E 테스트 | Playwright | 브라우저 전체 흐름 (별도 `e2e-test` skill에서 관리) |
+
+**TDD 사이클에서는 유닛 테스트와 통합 테스트만 작성한다.**
+E2E 테스트는 TDD 사이클과 별개로 `.claude/skills/e2e-test/SKILL.md`에서 관리한다.
+
 ## TDD (Test-Driven Development)
 
 ### Red-Green-Refactor 사이클
