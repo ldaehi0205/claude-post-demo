@@ -25,6 +25,7 @@
 Kent Beck의 TDD(Red-Green-Refactor)와 Tidy First 원칙을 따른다.
 
 **다음 작업 시 `.claude/skills/tdd-workflow/SKILL.md` 규칙을 반드시 따른다:**
+
 - 신규 기능 추가 (feat)
 - 기존 기능 수정 (feat)
 - 버그 수정 (fix)
@@ -116,21 +117,3 @@ Claude Code의 토큰 비용 절감을 위해 다음 원칙을 따른다:
 - **상단 안정성 유지**: 자주 변하지 않는 내용(프로젝트 정보, 기술 스택, 워크플로우)을 상단에 배치
 - **상세 규칙은 skills로 분리**: 필요할 때만 로드되어 불필요한 토큰 소비 방지
 - **CLAUDE.md 수정 시 주의**: 변경하면 캐시가 무효화되므로 불필요한 수정 자제
-
-### 문서 구조
-
-```
-CLAUDE.md (매 호출 자동 로드 → 간결하게)
-  ├── .claude/skills/  (skill 호출 시에만 로드)
-  │   ├── tdd-workflow/    TDD & Tidy First 상세 규칙
-  │   ├── review-code/     코드 리뷰 체크리스트
-  │   ├── fix-auth/        토큰 정책, 권한, 인증 디버깅
-  │   ├── create-component/ 컴포넌트 생성 규칙
-  │   ├── e2e-test/        E2E 테스트 시나리오
-  │   ├── n8n-slack-notify/ Slack 알림 디버깅
-  │   └── n8n-ai-summary/  AI 요약 디버깅
-  └── docs/  (필요 시 참조)
-      ├── API.md           API 명세서
-      ├── n8n.md           n8n 연동 상세
-      └── troubleshooting.md 캐시/ESM/트러블슈팅
-```
