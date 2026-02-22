@@ -61,6 +61,7 @@ post-root/
 
 아래 항목은 `.claude/skills/` 디렉토리의 스킬 문서를 참고:
 
+- **TDD & Tidy First 상세 규칙**: `.claude/skills/tdd-workflow/SKILL.md`
 - **파일 배치 규칙, 코드 규칙, 금지 사항**: `.claude/skills/review-code/SKILL.md`
 - **컴포넌트 규칙**: `.claude/skills/create-component/SKILL.md`
 - **API 명세, 인증 흐름, 토큰 정책**: `docs/API.md`
