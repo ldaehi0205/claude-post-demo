@@ -3,7 +3,28 @@ name: fix-auth
 description: JWT 토큰, 인증 미들웨어, useAuth 훅 관련 버그를 진단하고 수정합니다. 로그인 안됨, 토큰 만료, 인증 에러 시 사용합니다.
 ---
 
-# 인증 시스템 디버깅
+# 인증 시스템 & 토큰 정책
+
+## 토큰 정책
+
+| 토큰 | 유효 기간 | 저장 위치 |
+|------|-----------|-----------|
+| Access Token (JWT) | 60분 | localStorage |
+| Refresh Token | Idle 14일 / Absolute 30일 | HttpOnly · Secure Cookie |
+
+### 토큰 갱신 규칙
+
+- Refresh Token Rotation: 매 refresh 시 새 Refresh Token을 Set-Cookie로 발급, 기존 토큰은 revoke 처리
+- Access 만료로 `401 status:expired_token` 발생 시에만 refresh를 호출해서 새 Access를 발급한다
+- refresh 실패(`401 status:expired_token`) 시 클라이언트는 로그아웃 처리 및 로그인 페이지로 이동한다
+
+### 권한 규칙
+
+- 게시글 작성: 로그인 사용자만 가능 (미인증 시 `/login` 리다이렉트)
+- 게시글 수정: 작성자 본인만 가능
+- 게시글 삭제: 로그인된 모든 사용자 가능
+
+상세 API 명세 → `docs/API.md`
 
 ## 게시판 인증 흐름
 
