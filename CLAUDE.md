@@ -29,7 +29,11 @@
 ## AI 코드 생성 워크플로우
 
 Kent Beck의 TDD(Red-Green-Refactor)와 Tidy First 원칙을 따른다.
-상세 규칙 → `.claude/skills/tdd-workflow/SKILL.md`
+
+**다음 작업 시 `.claude/skills/tdd-workflow/SKILL.md` 규칙을 반드시 따른다:**
+- 신규 기능 추가 (feat)
+- 기존 기능 수정 (feat)
+- 버그 수정 (fix)
 
 [개발 단계 요약]
 
