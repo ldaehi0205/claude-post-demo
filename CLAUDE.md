@@ -61,8 +61,9 @@ post-root/
 
 - **TDD & Tidy First 상세 규칙**: `.claude/skills/tdd-workflow/SKILL.md`
 - **파일 배치 규칙, 코드 규칙, 금지 사항**: `.claude/skills/review-code/SKILL.md`
+- **토큰 정책, 권한 규칙, 인증 디버깅**: `.claude/skills/fix-auth/SKILL.md`
 - **컴포넌트 규칙**: `.claude/skills/create-component/SKILL.md`
-- **API 명세, 인증 흐름, 토큰 정책**: `docs/API.md`
+- **API 명세, 인증 흐름**: `docs/API.md`
 - **n8n 연동 상세 (webhook, payload, 설정)**: `docs/n8n.md`
 - **n8n Slack 알림 디버깅**: `.claude/skills/n8n-slack-notify/SKILL.md`
 - **n8n AI 자동요약 디버깅**: `.claude/skills/n8n-ai-summary/SKILL.md`
