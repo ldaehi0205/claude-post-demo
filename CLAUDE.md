@@ -28,37 +28,19 @@
 
 ## AI 코드 생성 워크플로우
 
-Kent Beck의 TDD(Test-Driven Development)와 Tidy First 원칙을 따른다.
+Kent Beck의 TDD(Red-Green-Refactor)와 Tidy First 원칙을 따른다.
+상세 규칙 → `.claude/skills/tdd-workflow/SKILL.md`
 
-단, 변경 범위가 "사소한 변경(minor change)"에 해당하는 경우에는
-2~4번(TDD 사이클)과 7번(문서화)을 생략할 수 있다.
-단계 중 하나라도 조건을 위반하면 작업은 실패로 간주한다.
+[개발 단계 요약]
 
-[사소한 변경(minor change) 정의]
+1. 요구사항 / 성공 조건 / 변경 파일 계획 제시
+2. TDD 사이클 (Red → Green → Refactor) 반복 - 테스트 도구: Playwright
+3. `.claude/skills/review-code/SKILL.md` 체크리스트로 코드 검증
+4. Tidy First: 구조적 변경(refactor)과 행위적 변경(feat/fix)을 별도 커밋으로 분리
+5. 문서화: API → `docs/API.md`, 시스템 → `CLAUDE.md`
+6. 로컬 검증 커맨드 제공 + 작업 결과 정리
 
-- 비즈니스 로직 변경이 없는 경우
-- 외부 API 계약(요청/응답/에러 코드) 변경이 없는 경우
-- 토큰/인증/보안 정책 변경이 없는 경우
-- 동작 결과가 기존과 동일한 리팩터링, 네이밍 수정, 주석/문구 수정
-- UI 표시 텍스트, 로그 메시지, 코드 포맷 수정
-
-[개발 워크플로우]
-
-1. 요구사항 / 성공 조건 / 변경 파일 계획을 먼저 제시한다.
-2. 실패하는 테스트를 작성한다. (Red) - 테스트 도구: Playwright (E2E)
-3. 테스트를 통과하는 최소한의 코드를 구현한다. (Green)
-4. 리팩터링한다. (Refactor) - 2~4 단계를 기능 완성까지 반복
-5. `.claude/skills/review-code/SKILL.md` 체크리스트로 코드 검증
-6. Tidy First: 구조적 변경(refactor)과 행위적 변경(feat/fix)을 별도 커밋으로 분리
-7. 문서화: API → `docs/API.md`, 시스템 → `CLAUDE.md`, 체크리스트 → `.claude/skills/review-code/SKILL.md`
-8. 로컬 검증 커맨드와 기대 결과 제공
-9. 작업 결과 정리 (변경 요약 + 리스크/엣지 케이스)
-
-[버그 수정 시 TDD 절차]
-
-1. 버그를 재현하는 실패 테스트를 먼저 작성한다.
-2. 테스트가 통과하도록 최소한의 수정을 한다.
-3. 리팩터링 후 모든 테스트가 통과하는지 확인한다.
+사소한 변경(비즈니스 로직/API/보안 변경 없음)은 TDD 사이클과 문서화를 생략 가능.
 
 ## 폴더 구조
 
