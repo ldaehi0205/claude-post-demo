@@ -15,6 +15,17 @@
   - Access 만료로 401 status:expired_token 발생 시에만 refresh를 호출해서 새 Access를 발급한다.
   - refresh 실패(401 status: expired_token) 시 클라이언트는 로그아웃 처리 및 로그인 페이지로 이동한다.
 
+## 기술 스택
+
+- Next.js 14, TypeScript, Tailwind CSS
+- App Router 사용
+- API: Next.js API Routes
+- ORM: Prisma
+- DB: Supabase (PostgreSQL)
+- API 통신: Axios, TanStack Query
+- 인증: JWT (jsonwebtoken), bcrypt
+- 자동화: n8n (외부 워크플로우 연동)
+
 ## AI 코드 생성 워크플로우
 
 Kent Beck의 TDD(Test-Driven Development)와 Tidy First 원칙을 따른다.
@@ -34,48 +45,14 @@ Kent Beck의 TDD(Test-Driven Development)와 Tidy First 원칙을 따른다.
 [개발 워크플로우]
 
 1. 요구사항 / 성공 조건 / 변경 파일 계획을 먼저 제시한다.
-   - 구현할 기능 요약
-   - 완료 기준(Acceptance Criteria)
-   - 수정 또는 추가될 파일 목록
-
-2. 실패하는 테스트를 작성한다. (Red)
-   - 구현 전에 테스트를 먼저 작성한다.
-   - 테스트 이름은 행위를 설명한다. (예: `shouldReturnPostWhenValidId`)
-   - 비즈니스 로직 변경이 있는 경우, 반드시 E2E 테스트도 추가한다.
-   - 테스트 도구: Playwright (E2E)
-
+2. 실패하는 테스트를 작성한다. (Red) - 테스트 도구: Playwright (E2E)
 3. 테스트를 통과하는 최소한의 코드를 구현한다. (Green)
-   - 테스트를 통과하기 위한 최소한의 코드만 작성한다.
-   - 과도한 추상화나 미래 대비 코드를 작성하지 않는다.
-
-4. 리팩터링한다. (Refactor)
-   - 테스트가 통과하는 상태에서만 리팩터링을 수행한다.
-   - 중복 제거, 네이밍 개선, 구조 정리 등을 수행한다.
-   - 리팩터링 후 모든 테스트가 통과하는지 확인한다.
-
-   > 2~4 단계를 기능이 완성될 때까지 반복한다.
-
-5. 코드 작성 완료 후, 반드시 다음 체크리스트를 검증한다.
-   - `.claude/skills/review-code/SKILL.md`의 체크리스트 기준으로 코드 검증
-
-6. Tidy First: 구조적 변경과 행위적 변경을 분리한다.
-   - **구조적 변경** (refactor): 동작 변경 없이 코드 구조만 개선 (이름 변경, 메서드 추출 등)
-   - **행위적 변경** (feat/fix): 실제 기능 추가나 버그 수정
-   - 구조적 변경이 필요하면 행위적 변경 전에 먼저 수행한다.
-   - 두 종류의 변경을 같은 커밋에 섞지 않는다.
-
-7. 문서화를 수행한다.
-   - 추가·변경된 API 및 토큰 관련 사항은 `docs/API.md`에 작성한다.
-   - 시스템 전반의 추가·변경 사항은 `CLAUDE.md` 파일에 작성 또는 수정한다.
-   - 변경, 추가된 개발 사항에 대한 체크리스트는 `.claude/skills/review-code/SKILL.md`에 작성 또는 수정한다.
-
-8. 로컬 검증 커맨드와 기대 결과를 제공한다.
-   - 예: test / build / lint / typecheck
-   - 각 커맨드의 성공 기준을 명확히 기술한다.
-
-9. 작업 결과를 정리한다.
-   - 변경 요약
-   - 남아 있는 리스크 및 엣지 케이스 체크리스트
+4. 리팩터링한다. (Refactor) - 2~4 단계를 기능 완성까지 반복
+5. `.claude/skills/review-code/SKILL.md` 체크리스트로 코드 검증
+6. Tidy First: 구조적 변경(refactor)과 행위적 변경(feat/fix)을 별도 커밋으로 분리
+7. 문서화: API → `docs/API.md`, 시스템 → `CLAUDE.md`, 체크리스트 → `.claude/skills/review-code/SKILL.md`
+8. 로컬 검증 커맨드와 기대 결과 제공
+9. 작업 결과 정리 (변경 요약 + 리스크/엣지 케이스)
 
 [버그 수정 시 TDD 절차]
 
@@ -83,155 +60,19 @@ Kent Beck의 TDD(Test-Driven Development)와 Tidy First 원칙을 따른다.
 2. 테스트가 통과하도록 최소한의 수정을 한다.
 3. 리팩터링 후 모든 테스트가 통과하는지 확인한다.
 
-## 기술 스택
-
-- Next.js 14, TypeScript, Tailwind CSS
-- App Router 사용
-- API: Next.js API Routes
-- ORM: Prisma
-- DB: Supabase (PostgreSQL)
-- API 통신: Axios, TanStack Query
-- 인증: JWT (jsonwebtoken), bcrypt
-- 자동화: n8n (외부 워크플로우 연동)
-
-## n8n 자동화 연동
-
-### 새 게시글 알림
-
-게시글 작성 시 n8n webhook을 호출하여 Slack 등 외부 서비스로 알림을 전송합니다.
-
-**환경 변수:**
-
-```bash
-N8N_WEBHOOK_URL=""           # n8n Webhook URL
-NEXT_PUBLIC_BASE_URL=""      # 사이트 기본 URL (게시글 링크 생성용)
-```
-
-**n8n 워크플로우 설정:**
-
-1. n8n에서 새 워크플로우 생성
-2. `Webhook` 노드 추가 (POST 메서드)
-3. `Slack` 노드 추가하여 알림 전송
-4. Webhook URL을 `.env`의 `N8N_WEBHOOK_URL`에 설정
-
-**Webhook Payload 형식:**
-
-```json
-{
-  "event": "new_post",
-  "post": {
-    "id": 1,
-    "title": "게시글 제목",
-    "author": "작성자 이름",
-    "authorId": "user123",
-    "createdAt": "2024-01-01T00:00:00.000Z",
-    "url": "https://your-domain.com/posts/1"
-  },
-  "timestamp": "2024-01-01T00:00:00.000Z"
-}
-```
-
-**Slack 메시지 템플릿 예시:**
-
-```
-📝 새 게시글이 등록되었습니다!
-
-*제목:* {{ $json.post.title }}
-*작성자:* {{ $json.post.author }}
-*링크:* {{ $json.post.url }}
-```
-
-**참고:**
-
-- webhook 호출 실패 시에도 게시글 작성은 정상 동작 (비동기 처리)
-- `N8N_WEBHOOK_URL`이 설정되지 않으면 알림 스킵
-
-### AI 요약 자동 생성
-
-게시글 작성/수정 시 n8n webhook을 호출하여 OpenAI로 요약을 생성하고, 콜백 API로 저장합니다.
-
-**흐름:**
-
-```
-게시글 작성 → DB 저장 (summary=null) → n8n webhook 호출 (비동기)
-  → n8n: OpenAI로 요약 생성 → PATCH /api/posts/{id}/summary 콜백
-  → DB에 summary 저장
-```
-
-**환경 변수:**
-
-```bash
-N8N_SUMMARY_WEBHOOK_URL=""   # AI 요약 n8n Webhook URL
-N8N_CALLBACK_SECRET=""       # n8n 콜백 인증 시크릿
-```
-
-**n8n 워크플로우 설정:**
-
-1. `Webhook` 노드 (POST) → `OpenAI` 노드 (Chat Completion, gpt-4o-mini) → `HTTP Request` 노드 (PATCH 콜백)
-2. OpenAI 프롬프트: "주어진 게시글의 제목과 본문을 읽고, 핵심 내용을 2-3문장으로 간결하게 요약"
-3. HTTP Request의 URL: `{{ $('Webhook').item.json.post.callbackUrl }}`
-4. HTTP Request 헤더: `x-callback-secret` 설정
-
-**Webhook Payload 형식:**
-
-```json
-{
-  "event": "summarize_post",
-  "post": {
-    "id": 1,
-    "title": "게시글 제목",
-    "content": "게시글 본문 전체 내용...",
-    "callbackUrl": "http://localhost:3000/api/posts/1/summary"
-  },
-  "timestamp": "2024-01-01T00:00:00.000Z"
-}
-```
-
-**참고:**
-
-- webhook 호출 실패 시에도 게시글 작성은 정상 동작 (비동기 처리)
-- `N8N_SUMMARY_WEBHOOK_URL`이 설정되지 않으면 요약 생성 스킵
-- 게시글 수정 시 기존 요약을 null로 초기화 후 재생성 요청
-- 콜백 API는 `x-callback-secret` 헤더로 인증
-
 ## 폴더 구조
 
 ```
 post-root/
-├── prisma/
-│   └── schema.prisma         # DB 스키마
+├── prisma/schema.prisma
 ├── src/
 │   ├── app/
-│   │   ├── layout.tsx        # 루트 레이아웃
-│   │   ├── page.tsx          # 홈
-│   │   ├── globals.css       # 전역 스타일
-│   │   ├── posts/
-│   │   │   ├── page.tsx              # /posts (목록)
-│   │   │   ├── new/
-│   │   │   │   └── page.tsx          # /posts/new (작성)
-│   │   │   └── [id]/
-│   │   │       ├── page.tsx          # /posts/:id (상세)
-│   │   │       └── edit/
-│   │   │           └── page.tsx      # /posts/:id/edit (수정)
-│   │   └── api/
-│   │       └── posts/
-│   │           ├── route.ts          # GET(목록), POST(작성)
-│   │           └── [id]/
-│   │               └── route.ts      # GET, PUT, DELETE
-│   ├── components/
-│   │   ├── ui/               # 공통 UI (Button, Input 등)
-│   │   ├── layout/           # Header, Footer
-│   │   └── posts/            # 게시판 컴포넌트
-│   ├── hooks/                # TanStack Query 등 공통 훅
-│   ├── apis/                 # Axios 호출 함수
-│   ├── data/                 # DB 접근
-│   ├── types/                # 타입 정의
-│   └── utils/                # 유틸 함수
-├── public/                   # 정적 파일 (이미지 등)
-├── .env                      # 환경변수 (DB 연결)
-├── tailwind.config.ts
-├── tsconfig.json
-└── package.json
+│   │   ├── layout.tsx, page.tsx, globals.css
+│   │   ├── posts/ (page.tsx, new/page.tsx, [id]/page.tsx, [id]/edit/page.tsx)
+│   │   └── api/posts/ (route.ts, [id]/route.ts)
+│   ├── components/ (ui/, layout/, posts/)
+│   ├── hooks/, apis/, data/, types/, utils/
+├── public/, .env, tailwind.config.ts, tsconfig.json, package.json
 ```
 
 ## 개발 규칙
@@ -241,8 +82,10 @@ post-root/
 - **파일 배치 규칙, 코드 규칙, 금지 사항**: `.claude/skills/review-code/SKILL.md`
 - **컴포넌트 규칙**: `.claude/skills/create-component/SKILL.md`
 - **API 명세, 인증 흐름, 토큰 정책**: `docs/API.md`
-- **n8n Slack 새 게시글 알림**: `.claude/skills/n8n-slack-notify/SKILL.md`
-- **n8n AI 자동요약 연동**: `.claude/skills/n8n-ai-summary/SKILL.md`
+- **n8n 연동 상세 (webhook, payload, 설정)**: `docs/n8n.md`
+- **n8n Slack 알림 디버깅**: `.claude/skills/n8n-slack-notify/SKILL.md`
+- **n8n AI 자동요약 디버깅**: `.claude/skills/n8n-ai-summary/SKILL.md`
+- **캐시 관리, ESM 모듈, 트러블슈팅**: `docs/troubleshooting.md`
 
 ### 주의: Server Action vs API Route
 
@@ -255,133 +98,23 @@ Next.js App Router에서는 동일한 기능이 **두 곳**에서 구현될 수 
 
 **새로운 기능 추가 시 실제로 사용되는 코드 경로를 먼저 확인할 것!**
 
-## 참고 문서
-
-- API 개발 시 `docs/API.md` 명세서를 먼저 확인할 것
-- 작업 수행 전 `.claude/skills/` 디렉토리의 관련 스킬 문서를 확인할 것
-  - `create-component`: 컴포넌트 생성 규칙 및 템플릿
-  - `fix-auth`: 인증 관련 디버깅 체크리스트
-  - `review-code`: 코드 리뷰 체크리스트
-  - `e2e-test`: E2E 테스트 시나리오
-  - `db-migration`: Prisma 마이그레이션 절차
-  - `n8n-slack-notify`: n8n Slack 새 게시글 알림 연동 및 디버깅
-  - `n8n-ai-summary`: n8n + OpenAI AI 자동요약 연동 및 디버깅
-
 # 개발
 
-## 초기 세팅 순서
+## 초기 세팅
 
 ```bash
-npm install              # 의존성 설치
-npm run dev              # 개발 서버 실행
+npm install && npm run dev
 ```
 
 ## 자동 커밋 정책
 
-AI가 작업 완료 후 자동으로 커밋을 수행한다.
-
-- 변경 사항이 있을 때만 commit한다.
-- 모든 테스트가 통과할 때만 commit한다.
-- push는 사용자가 명시적으로 요청할 때만 수행한다.
-- **Tidy First**: 구조적 변경(`refactor`)과 행위적 변경(`feat`/`fix`)은 별도 커밋으로 분리한다.
-
-### 커밋 메시지 작성 규칙
-
-**커밋 메시지는 한국어로 자세하게 작성한다.**
-
-```
-<타입>: <제목> (간결한 요약)
-
-<본문>
-- 변경 사항 1
-- 변경 사항 2
-- 변경 사항 3
-
-<영향 범위> (선택)
-- 영향받는 파일/기능 목록
-```
-
-**타입 종류:**
-| 타입 | 설명 |
-|------|------|
-| feat | 새로운 기능 추가 |
-| fix | 버그 수정 |
-| refactor | 코드 리팩토링 (기능 변경 없음) |
-| style | 코드 포맷팅, 세미콜론 누락 등 |
-| docs | 문서 수정 |
-| test | 테스트 코드 추가/수정 |
-| chore | 빌드 설정, 패키지 매니저 설정 등 |
-
-**예시:**
-
-```
-feat: 게시글 이미지 업로드 기능 추가
-
-- MarkdownEditor에 이미지 업로드 버튼 추가
-- Supabase Storage 연동으로 이미지 저장
-- 드래그앤드롭, 붙여넣기 지원
-- 업로드 후 마크다운 이미지 문법으로 자동 삽입
-
-영향 범위:
-- src/components/ui/MarkdownEditor.tsx
-- src/app/actions/upload.ts
-- src/lib/supabase.ts
-```
+- 변경 사항이 있을 때만 commit, 모든 테스트 통과 시에만 commit
+- push는 사용자가 명시적으로 요청할 때만 수행
+- **Tidy First**: 구조적 변경(`refactor`)과 행위적 변경(`feat`/`fix`)은 별도 커밋으로 분리
+- 커밋 메시지는 **한국어**로 작성: `<타입>: <제목>` + 본문(변경 사항 목록) + 영향 범위
+- 타입: feat, fix, refactor, style, docs, test, chore
 
 ## 캐시 관리 (중요)
 
-Next.js의 `.next` 캐시와 `node_modules/.cache`는 설정 변경 시 오래된 모듈 정보를 유지하여 런타임 오류를 발생시킬 수 있다.
-
-### 캐시 삭제가 필요한 경우
-
-다음 상황에서는 **반드시** 캐시를 삭제한다:
-
-1. `next.config.js` 설정 변경 시
-2. ESM 모듈 관련 설정 변경 시 (`transpilePackages`, `serverComponentsExternalPackages`)
-3. dynamic import 패턴 변경 시
-4. webpack 관련 설정 변경 시
-5. 패키지 추가/삭제/버전 변경 시
-6. 원인 불명의 런타임 오류 발생 시
-
-### 캐시 삭제 명령어
-
-```bash
-# 기본 캐시 삭제
-rm -rf .next
-
-# 전체 캐시 삭제 (권장)
-rm -rf .next node_modules/.cache
-
-# 캐시 삭제 후 재시작
-rm -rf .next node_modules/.cache && npm run dev
-```
-
-### 주요 오류와 해결법
-
-| 오류 메시지                                             | 원인                                      | 해결                                                |
-| ------------------------------------------------------- | ----------------------------------------- | --------------------------------------------------- |
-| `missing required error components`                     | error.tsx/global-error.tsx 누락 또는 캐시 | 파일 생성 + 캐시 삭제                               |
-| `__webpack_modules__[moduleId] is not a function`       | transpilePackages 설정 충돌               | `serverComponentsExternalPackages` 사용 + 캐시 삭제 |
-| `Loading chunk failed (undefined)`                      | dynamic import 경로 해석 실패             | default export 사용 + 캐시 삭제                     |
-| `Cannot read properties of null (reading 'useContext')` | React context 초기화 실패                 | 캐시 삭제 + 서버 재시작                             |
-
-### ESM 모듈 사용 시 권장 설정
-
-`react-markdown` 등 ESM 모듈 사용 시:
-
-```javascript
-// next.config.js
-const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ['react-markdown', 'remark-gfm'],
-  },
-};
-```
-
-```typescript
-// dynamic import는 default export 사용
-const Component = dynamic(() => import('./Component'), {
-  ssr: false,
-  loading: () => <p>로딩 중...</p>,
-});
-```
+설정 변경/패키지 변경/원인 불명 오류 시 반드시 캐시 삭제: `rm -rf .next node_modules/.cache`
+상세 가이드 → `docs/troubleshooting.md`
