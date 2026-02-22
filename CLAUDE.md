@@ -38,7 +38,7 @@ Kent Beck의 TDD(Red-Green-Refactor)와 Tidy First 원칙을 따른다.
 [개발 단계 요약]
 
 1. 요구사항 / 성공 조건 / 변경 파일 계획 제시
-2. TDD 사이클 (Red → Green → Refactor) 반복 - 테스트 도구: Playwright
+2. TDD 사이클 (Red → Green → Refactor) 반복 - 유닛/통합 테스트 (E2E는 별도)
 3. `.claude/skills/review-code/SKILL.md` 체크리스트로 코드 검증
 4. Tidy First: 구조적 변경(refactor)과 행위적 변경(feat/fix)을 별도 커밋으로 분리
 5. 문서화: API → `docs/API.md`, 시스템 → `CLAUDE.md`
