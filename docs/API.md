@@ -755,3 +755,97 @@ interface AuthResponse {
   accessToken: string;
 }
 ```
+
+---
+
+## Token Budget Manager (`src/lib/claude/`)
+
+Claude API 호출 전 토큰 예산을 관리하는 라이브러리.
+Anthropic Token Counting API/SDK를 사용하여 입력 토큰을 정확히 측정하고, 예산 초과 시 자동 축약한다.
+
+### 환경 변수
+
+```
+ANTHROPIC_API_KEY=sk-ant-...
+```
+
+### 주요 함수
+
+| 함수                 | 설명                                                  |
+| -------------------- | ----------------------------------------------------- |
+| `countInputTokens`   | Token Counting API로 입력 토큰 수 측정                |
+| `shrinkToBudget`     | 예산 초과 시 우선순위별 자동 축약 (A→B→C→D)           |
+| `buildRequest`       | ClaudePayload → SDK 요청 바디 변환 (문서병합/가이드)  |
+| `callClaude`         | 전체 파이프라인: count → shrink → build → call → log  |
+
+### 타입
+
+```typescript
+interface ClaudePayload {
+  model: string;
+  system?: string;
+  messages: MessageParam[];
+  tools?: ToolParam[];
+  documents?: DocumentChunk[];
+  outputGuide?: OutputGuide;
+}
+
+interface TokenBudgetConfig {
+  inputTokenBudget: number;   // 예: 8_000
+  outputTokenBudget: number;  // 예: 1_000
+  safetyMargin: number;       // 예: 300
+}
+```
+
+### 축약 정책 (우선순위)
+
+| 순서 | 전략             | 설명                                       |
+| ---- | ---------------- | ------------------------------------------ |
+| A    | HISTORY          | 오래된 대화 turn부터 제거                  |
+| B    | DOCUMENTS        | relevanceScore 기준 상위 K개만 유지        |
+| C    | SYSTEM           | 시스템 프롬프트 중복 문장 제거             |
+| D    | USER_MESSAGE     | 유저 메시지를 의도+키워드 형태로 구조 요약 |
+
+### 로그 형식
+
+```json
+{
+  "requestId": "uuid",
+  "model": "claude-sonnet-4-5-20250929",
+  "inputTokens": 4000,
+  "outputTokens": 300,
+  "maxTokens": 1000,
+  "estimatedCost": { "inputCostUsd": 0.012, "outputCostUsd": 0.0045, "totalCostUsd": 0.0165 },
+  "shrinkSteps": [{ "strategy": "HISTORY", "beforeTokens": 8500, "afterTokens": 6000, "detail": "turn 2개 제거" }],
+  "latencyMs": 1500,
+  "timestamp": "2026-02-23T00:00:00.000Z"
+}
+```
+
+### 사용 예시
+
+```typescript
+import { callClaude, type ClaudePayload, type TokenBudgetConfig } from '@/lib/claude';
+
+const config: TokenBudgetConfig = {
+  inputTokenBudget: 8_000,
+  outputTokenBudget: 1_000,
+  safetyMargin: 300,
+};
+
+const payload: ClaudePayload = {
+  model: 'claude-sonnet-4-5-20250929',
+  system: '당신은 한국어 게시판 도우미입니다.',
+  messages: [
+    { role: 'user', content: '이 게시글을 요약해주세요: ...' },
+  ],
+  documents: [
+    { content: '게시글 본문...', relevanceScore: 1.0 },
+  ],
+  outputGuide: { maxBullets: 5 },
+};
+
+const response = await callClaude(payload, config);
+console.log(response.content);   // Claude 응답
+console.log(response.log);       // 토큰/비용/축약 로그
+```
