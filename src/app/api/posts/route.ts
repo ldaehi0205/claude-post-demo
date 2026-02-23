@@ -4,13 +4,23 @@ import { verifyToken, getTokenFromHeader } from '@/utils/jwt';
 import { CreatePostInput } from '@/types/post';
 import { notifyNewPost } from '@/utils/n8n';
 import { getBaseUrl } from '@/utils/url';
+import { parseTagsFromContent } from '@/utils/tagParser';
+import { upsertTagsForPost } from '@/utils/tagService';
 
 interface DeletePostsInput {
   ids: number[];
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const tag = searchParams.get('tag');
+
+  const where = tag
+    ? { postTags: { some: { tag: { name: tag } } } }
+    : undefined;
+
   const posts = await prisma.post.findMany({
+    where,
     orderBy: { createdAt: 'desc' },
     include: {
       author: {
@@ -23,6 +33,11 @@ export async function GET() {
       _count: {
         select: {
           comments: true,
+        },
+      },
+      postTags: {
+        include: {
+          tag: { select: { id: true, name: true } },
         },
       },
     },
@@ -59,21 +74,29 @@ export async function POST(request: Request) {
   }
 
   const body: CreatePostInput = await request.json();
-  const post = await prisma.post.create({
-    data: {
-      title: body.title,
-      content: body.content,
-      authorId: payload.userId,
-    },
-    include: {
-      author: {
-        select: {
-          id: true,
-          name: true,
-          userID: true,
+  const tagNames = parseTagsFromContent(body.content);
+
+  const post = await prisma.$transaction(async (tx) => {
+    const newPost = await tx.post.create({
+      data: {
+        title: body.title,
+        content: body.content,
+        authorId: payload.userId,
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            userID: true,
+          },
         },
       },
-    },
+    });
+
+    await upsertTagsForPost(tx, newPost.id, tagNames);
+
+    return newPost;
   });
 
   // n8n webhook으로 새 게시글 알림 전송 (비동기, 실패해도 응답에 영향 없음)

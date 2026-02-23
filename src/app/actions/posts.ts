@@ -5,26 +5,35 @@ import { redirect } from 'next/navigation';
 import { prisma } from '@/data/prisma';
 import { notifyNewPost } from '@/utils/n8n';
 import { getBaseUrl } from '@/utils/url';
+import { parseTagsFromContent } from '@/utils/tagParser';
+import { upsertTagsForPost } from '@/utils/tagService';
 
 /** 게시글 작성 서버 액션 */
 export async function createPost(formData: FormData, authorId: number) {
   const title = formData.get('title') as string;
   const content = formData.get('content') as string;
+  const tagNames = parseTagsFromContent(content);
 
-  const post = await prisma.post.create({
-    data: {
-      title,
-      content,
-      authorId,
-    },
-    include: {
-      author: {
-        select: {
-          name: true,
-          userID: true,
+  const post = await prisma.$transaction(async (tx) => {
+    const newPost = await tx.post.create({
+      data: {
+        title,
+        content,
+        authorId,
+      },
+      include: {
+        author: {
+          select: {
+            name: true,
+            userID: true,
+          },
         },
       },
-    },
+    });
+
+    await upsertTagsForPost(tx, newPost.id, tagNames);
+
+    return newPost;
   });
 
   // n8n webhook으로 새 게시글 알림 전송
@@ -45,14 +54,20 @@ export async function createPost(formData: FormData, authorId: number) {
 export async function updatePost(formData: FormData, postId: number) {
   const title = formData.get('title') as string;
   const content = formData.get('content') as string;
+  const tagNames = parseTagsFromContent(content);
 
-  await prisma.post.update({
-    where: { id: postId },
-    data: {
-      title,
-      content,
-      summary: null,
-    },
+  await prisma.$transaction(async (tx) => {
+    await tx.post.update({
+      where: { id: postId },
+      data: {
+        title,
+        content,
+        summary: null,
+      },
+    });
+
+    await tx.postTag.deleteMany({ where: { postId } });
+    await upsertTagsForPost(tx, postId, tagNames);
   });
 
   revalidatePath('/posts');

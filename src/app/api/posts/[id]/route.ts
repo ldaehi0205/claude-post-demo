@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/data/prisma';
 import { verifyToken, getTokenFromHeader } from '@/utils/jwt';
 import { UpdatePostInput } from '@/types/post';
+import { parseTagsFromContent } from '@/utils/tagParser';
+import { upsertTagsForPost } from '@/utils/tagService';
 
 interface Params {
   params: { id: string };
@@ -16,6 +18,11 @@ export async function GET(request: Request, { params }: Params) {
           id: true,
           name: true,
           userID: true,
+        },
+      },
+      postTags: {
+        include: {
+          tag: { select: { id: true, name: true } },
         },
       },
     },
@@ -83,18 +90,33 @@ export async function PUT(request: Request, { params }: Params) {
   }
 
   const body: UpdatePostInput = await request.json();
-  const updatedPost = await prisma.post.update({
-    where: { id: Number(params.id) },
-    data: body,
-    include: {
-      author: {
-        select: {
-          id: true,
-          name: true,
-          userID: true,
+  const postId = Number(params.id);
+
+  const updatedPost = await prisma.$transaction(async (tx) => {
+    const updated = await tx.post.update({
+      where: { id: postId },
+      data: {
+        ...(body.title && { title: body.title }),
+        ...(body.content && { content: body.content, summary: null }),
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            userID: true,
+          },
         },
       },
-    },
+    });
+
+    if (body.content) {
+      const tagNames = parseTagsFromContent(body.content);
+      await tx.postTag.deleteMany({ where: { postId } });
+      await upsertTagsForPost(tx, postId, tagNames);
+    }
+
+    return updated;
   });
 
   return NextResponse.json(updatedPost);

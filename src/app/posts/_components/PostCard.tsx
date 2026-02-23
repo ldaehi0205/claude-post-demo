@@ -44,6 +44,18 @@ export function PostCard({ post, ids, selectPost }: PostCardProps) {
         >
           {post.title}
         </Link>
+        {post.postTags && post.postTags.length > 0 && (
+          <div className="flex flex-wrap gap-1 mt-1">
+            {post.postTags.map(({ tag }) => (
+              <span
+                key={tag.id}
+                className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded"
+              >
+                #{tag.name}
+              </span>
+            ))}
+          </div>
+        )}
         {post.summary && (
           <p className="text-xs text-gray-400 mt-1 truncate">{post.summary}</p>
         )}
