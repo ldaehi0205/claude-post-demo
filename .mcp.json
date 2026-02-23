@@ -16,15 +16,6 @@
         "/Users/leedaehee/Applications/post-demo"
       ]
     },
-    "filesystem": {
-      "type": "stdio",
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-filesystem",
-        "/Users/leedaehee/Applications/post-demo"
-      ]
-    },
     "context7": {
       "type": "stdio",
       "command": "npx",
