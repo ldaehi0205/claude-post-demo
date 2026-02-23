@@ -177,11 +177,36 @@ Access Token 갱신
 
 ---
 
+## 태그 API
+
+### GET /tags
+
+태그 목록 조회 (게시글 수 포함, postCount > 0인 태그만 반환)
+
+**Response 200**
+
+```json
+{
+  "tags": [
+    { "name": "react", "postCount": 5 },
+    { "name": "nextjs", "postCount": 3 }
+  ]
+}
+```
+
+---
+
 ## 게시글 API
 
 ### GET /posts
 
 게시글 목록 조회
+
+**Query Parameters**
+
+| 파라미터 | 타입   | 필수 | description                          |
+| -------- | ------ | ---- | ------------------------------------ |
+| tag      | string | X    | 태그명으로 필터링 (예: `?tag=react`) |
 
 **Response 200**
 
@@ -198,7 +223,11 @@ Access Token 갱신
       "id": 1,
       "name": "테스트",
       "userID": "testuser"
-    }
+    },
+    "postTags": [
+      { "tag": { "id": 1, "name": "react" } },
+      { "tag": { "id": 2, "name": "nextjs" } }
+    ]
   }
 ]
 ```
@@ -680,6 +709,23 @@ interface Post {
     name: string;
     userID: string;
   };
+  postTags?: Array<{
+    tag: Tag;
+  }>;
+}
+```
+
+### Tag
+
+```typescript
+interface Tag {
+  id: number;
+  name: string;
+}
+
+interface TagWithCount {
+  name: string;
+  postCount: number;
 }
 ```
 
