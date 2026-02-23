@@ -11,7 +11,7 @@ const POSTS_KEY = ['posts'];
 export function usePosts() {
   return useQuery({
     queryKey: POSTS_KEY,
-    queryFn: postsApi.getAll,
+    queryFn: () => postsApi.getAll(),
   });
 }
 

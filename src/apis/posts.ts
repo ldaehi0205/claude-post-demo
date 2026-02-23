@@ -2,8 +2,9 @@ import { api } from './client';
 import { Post, CreatePostInput, UpdatePostInput } from '@/types/post';
 
 export const postsApi = {
-  getAll: async (): Promise<Post[]> => {
-    const { data } = await api.get<Post[]>('/posts');
+  getAll: async (tag?: string): Promise<Post[]> => {
+    const params = tag ? `?tag=${encodeURIComponent(tag)}` : '';
+    const { data } = await api.get<Post[]>(`/posts${params}`);
     return data;
   },
 

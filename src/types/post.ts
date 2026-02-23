@@ -1,4 +1,5 @@
 import { User } from './auth';
+import { Tag } from './tag';
 
 export interface Post {
   id: number;
@@ -14,6 +15,9 @@ export interface Post {
   _count?: {
     comments: number;
   };
+  postTags?: Array<{
+    tag: Tag;
+  }>;
 }
 
 export interface CreatePostInput {

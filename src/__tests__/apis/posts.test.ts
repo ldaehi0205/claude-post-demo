@@ -34,6 +34,16 @@ describe('postsApi', () => {
       expect(result).toHaveLength(2);
       expect(result[0].title).toBe('게시글1');
     });
+
+    it('태그 필터가 있으면 query param과 함께 호출해야 한다', async () => {
+      const posts = [{ id: 1, title: '게시글1', content: '#react' }];
+      mockGet.mockResolvedValueOnce({ data: posts });
+
+      const result = await postsApi.getAll('react');
+
+      expect(mockGet).toHaveBeenCalledWith('/posts?tag=react');
+      expect(result).toHaveLength(1);
+    });
   });
 
   describe('getById', () => {
