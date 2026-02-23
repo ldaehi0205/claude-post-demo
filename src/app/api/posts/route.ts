@@ -4,7 +4,6 @@ import { verifyToken, getTokenFromHeader } from '@/utils/jwt';
 import { CreatePostInput } from '@/types/post';
 import { notifyNewPost } from '@/utils/n8n';
 import { getBaseUrl } from '@/utils/url';
-import { parseTagsFromContent } from '@/utils/tagParser';
 import { upsertTagsForPost } from '@/utils/tagService';
 
 interface DeletePostsInput {
@@ -74,7 +73,7 @@ export async function POST(request: Request) {
   }
 
   const body: CreatePostInput = await request.json();
-  const tagNames = parseTagsFromContent(body.content);
+  const tagNames: string[] = body.tags ?? [];
 
   const post = await prisma.$transaction(async (tx) => {
     const newPost = await tx.post.create({

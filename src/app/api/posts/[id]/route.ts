@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/data/prisma';
 import { verifyToken, getTokenFromHeader } from '@/utils/jwt';
 import { UpdatePostInput } from '@/types/post';
-import { parseTagsFromContent } from '@/utils/tagParser';
 import { upsertTagsForPost } from '@/utils/tagService';
 
 interface Params {
@@ -110,10 +109,9 @@ export async function PUT(request: Request, { params }: Params) {
       },
     });
 
-    if (body.content) {
-      const tagNames = parseTagsFromContent(body.content);
+    if (body.tags) {
       await tx.postTag.deleteMany({ where: { postId } });
-      await upsertTagsForPost(tx, postId, tagNames);
+      await upsertTagsForPost(tx, postId, body.tags);
     }
 
     return updated;

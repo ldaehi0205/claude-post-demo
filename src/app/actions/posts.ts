@@ -5,14 +5,14 @@ import { redirect } from 'next/navigation';
 import { prisma } from '@/data/prisma';
 import { notifyNewPost } from '@/utils/n8n';
 import { getBaseUrl } from '@/utils/url';
-import { parseTagsFromContent } from '@/utils/tagParser';
 import { upsertTagsForPost } from '@/utils/tagService';
 
 /** 게시글 작성 서버 액션 */
 export async function createPost(formData: FormData, authorId: number) {
   const title = formData.get('title') as string;
   const content = formData.get('content') as string;
-  const tagNames = parseTagsFromContent(content);
+  const tagsRaw = formData.get('tags') as string | null;
+  const tagNames: string[] = tagsRaw ? JSON.parse(tagsRaw) : [];
 
   const post = await prisma.$transaction(async (tx) => {
     const newPost = await tx.post.create({
@@ -54,7 +54,8 @@ export async function createPost(formData: FormData, authorId: number) {
 export async function updatePost(formData: FormData, postId: number) {
   const title = formData.get('title') as string;
   const content = formData.get('content') as string;
-  const tagNames = parseTagsFromContent(content);
+  const tagsRaw = formData.get('tags') as string | null;
+  const tagNames: string[] = tagsRaw ? JSON.parse(tagsRaw) : [];
 
   await prisma.$transaction(async (tx) => {
     await tx.post.update({

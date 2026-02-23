@@ -23,9 +23,11 @@ export interface Post {
 export interface CreatePostInput {
   title: string;
   content: string;
+  tags?: string[];
 }
 
 export interface UpdatePostInput {
   title?: string;
   content?: string;
+  tags?: string[];
 }
