@@ -3,6 +3,9 @@
  * 실행: npx ts-node --compiler-options '{"module":"commonjs"}' scripts/test-claude.ts
  */
 
+import { config as dotenvConfig } from 'dotenv';
+dotenvConfig(); // .env 파일 로드
+
 import { callClaude, countInputTokens } from '../src/lib/claude';
 import type { ClaudePayload, TokenBudgetConfig } from '../src/lib/claude';
 
