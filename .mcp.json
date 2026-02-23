@@ -27,7 +27,8 @@
       "args": ["-y", "figma-developer-mcp", "--stdio"],
       "env": {
         "FIGMA_API_KEY": "${FIGMA_ACCESS_TOKEN}"
-      }
+      },
+      "disabled": true
     },
     "linear": {
       "type": "stdio",
@@ -35,12 +36,14 @@
       "args": ["-y", "@tacticlaunch/mcp-linear"],
       "env": {
         "LINEAR_API_KEY": "${LINEAR_API_KEY}"
-      }
+      },
+      "disabled": true
     },
     "n8n": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "n8n-mcp"]
+      "args": ["-y", "n8n-mcp"],
+      "disabled": true
     }
   }
 }
