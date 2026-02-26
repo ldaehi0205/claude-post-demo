@@ -8,6 +8,7 @@ import {
   isIdleTimeoutExpired,
   REFRESH_TOKEN_ABSOLUTE_DAYS,
 } from '@/utils/jwt';
+import { errorResponse } from '@/utils/apiError';
 
 export async function POST() {
   const cookieStore = await cookies();
