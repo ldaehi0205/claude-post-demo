@@ -3,6 +3,7 @@ import { prisma } from '@/data/prisma';
 import { verifyToken, getTokenFromHeader } from '@/utils/jwt';
 import { UpdatePostInput } from '@/types/post';
 import { upsertTagsForPost } from '@/utils/tagService';
+import { errorResponse } from '@/utils/apiError';
 
 interface Params {
   params: { id: string };
