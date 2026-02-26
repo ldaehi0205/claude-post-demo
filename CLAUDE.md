@@ -68,6 +68,7 @@ post-root/
 - **n8n 연동 상세 (webhook, payload, 설정)**: `docs/n8n.md`
 - **n8n Slack 알림 디버깅**: `.claude/skills/n8n-slack-notify/SKILL.md`
 - **n8n AI 자동요약 디버깅**: `.claude/skills/n8n-ai-summary/SKILL.md`
+- **Linear 이슈 워크플로우 (브랜치/PR/리뷰)**: `.claude/skills/linear-workflow/SKILL.md`
 - **캐시 관리, ESM 모듈, 트러블슈팅**: `docs/troubleshooting.md`
 
 ### 주의: Server Action vs API Route
