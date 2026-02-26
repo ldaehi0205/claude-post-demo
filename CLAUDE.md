@@ -89,6 +89,19 @@ Next.js App Router에서는 동일한 기능이 **두 곳**에서 구현될 수 
 npm install && npm run dev
 ```
 
+## Linear 이슈 작업 워크플로우
+
+Linear 이슈 ID(예: `LDH-8`)를 받으면 다음 순서로 작업한다:
+
+1. Linear API로 이슈 조회 (제목, 설명, 우선순위 확인)
+2. 브랜치 생성: `<타입>/LDH-<번호>-<간단설명>` (예: `fix/LDH-8-post-not-found`)
+3. 코드 분석 → 구현 → 테스트 → 커밋
+4. `main` 브랜치로 PR 생성 (`gh pr create`)
+5. Linear 이슈 상태를 "Done"으로 변경
+
+**브랜치 네이밍**: `<타입>/LDH-<번호>-<영문설명>`
+- 타입: feat, fix, refactor, docs, test, chore
+
 ## 자동 커밋 정책
 
 - 변경 사항이 있을 때만 commit, 모든 테스트 통과 시에만 commit
