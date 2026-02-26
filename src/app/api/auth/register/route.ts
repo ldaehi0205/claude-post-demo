@@ -19,9 +19,10 @@ export async function POST(request: Request) {
   });
 
   if (existingUser) {
-    return NextResponse.json(
+    return errorResponse(
+      request,
       { error: '이미 사용 중인 아이디입니다.', code: 'duplicate_user' },
-      { status: 400 },
+      400,
     );
   }
 
