@@ -23,11 +23,11 @@ function generateErrorKey(payload: LinearErrorPayload): string {
 function isDuplicate(key: string): boolean {
   const now = Date.now();
 
-  for (const [k, timestamp] of recentErrors) {
+  recentErrors.forEach((timestamp, k) => {
     if (now - timestamp > DEDUP_WINDOW_MS) {
       recentErrors.delete(k);
     }
-  }
+  });
 
   if (recentErrors.has(key)) {
     return true;
