@@ -86,7 +86,7 @@ mutation {
 - `issueId`는 Step 1에서 조회한 이슈의 UUID (`id` 필드, `identifier`가 아님)
 - `linearGraphQL()` 함수 재사용
 
-## Step 2: 브랜치 생성
+## Step 3: 브랜치 생성
 
 ### 네이밍 규칙
 
