@@ -10,7 +10,7 @@ import {
 } from '@/utils/jwt';
 import { errorResponse } from '@/utils/apiError';
 
-export async function POST() {
+export async function POST(request: Request) {
   const cookieStore = await cookies();
   const refreshToken = cookieStore.get('refreshToken')?.value;
 
