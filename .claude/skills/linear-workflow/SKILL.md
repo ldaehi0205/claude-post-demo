@@ -116,7 +116,7 @@ git checkout -b feat/LDH-10-add-search
 - **Tidy First**: 구조적 변경(`refactor`)과 행위적 변경(`feat`/`fix`)은 별도 커밋
 - **커밋 메시지**: 한국어, `<타입>: <제목>` 형식
 
-## Step 4: PR 생성
+## Step 5: PR 생성
 
 `gh pr create`로 main 대상 PR을 생성한다.
 
