@@ -14,6 +14,8 @@ description: Linear 이슈 기반 개발 워크플로우. 이슈 확인 → 브�
   ↓
 [Step 1] Linear 이슈 조회 (제목, 설명, 우선순위)
   ↓
+[Step 1.5] 이슈 검증 & 착수 승인 (사용자 확인 → Linear 코멘트)
+  ↓
 [Step 2] 브랜치 생성 (feat/LDH-10-add-feature)
   ↓
 [Step 3] 구현 & 커밋 (TDD 사이클, tdd-workflow 스킬 참조)
