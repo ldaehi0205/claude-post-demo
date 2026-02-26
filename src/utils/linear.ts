@@ -146,6 +146,7 @@ export async function reportErrorToLinear(
       title,
       description,
       teamId,
+      projectId: '187af142-bb5e-459b-998f-9092c65e5dfd',
       priority: payload.status >= 500 ? 1 : 3,
     };
 
