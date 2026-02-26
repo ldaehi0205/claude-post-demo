@@ -19,18 +19,20 @@ export async function POST(request: Request) {
   });
 
   if (!user) {
-    return NextResponse.json(
+    return errorResponse(
+      request,
       { error: '아이디 또는 비밀번호가 올바르지 않습니다.', code: 'invalid_credentials' },
-      { status: 401 },
+      401,
     );
   }
 
   const isValidPassword = await bcrypt.compare(password, user.password);
 
   if (!isValidPassword) {
-    return NextResponse.json(
+    return errorResponse(
+      request,
       { error: '아이디 또는 비밀번호가 올바르지 않습니다.', code: 'invalid_credentials' },
-      { status: 401 },
+      401,
     );
   }
 
