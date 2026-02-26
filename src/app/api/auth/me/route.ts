@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/data/prisma';
 import { verifyToken, getTokenFromHeader } from '@/utils/jwt';
+import { errorResponse } from '@/utils/apiError';
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get('Authorization');
