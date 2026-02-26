@@ -18,7 +18,7 @@ description: Linear 이슈 기반 개발 워크플로우. 이슈 확인 → 브�
   ↓
 [Step 3] 브랜치 생성 (feat/LDH-10-add-feature)
   ↓
-[Step 4] 구현 & 커밋 (TDD 사이클, tdd-workflow 스킬 참조)
+[Step 4] 구현 & 커밋 (tdd-workflow, git-commit 스킬 참조)
   ↓
 [Step 5] PR 생성 (gh pr create → main)
   ↓
