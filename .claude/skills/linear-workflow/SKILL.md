@@ -154,7 +154,7 @@ gh api repos/{owner}/{repo}/pulls/{pr_number}/reviews
 gh api repos/{owner}/{repo}/pulls/{pr_number}/comments
 ```
 
-### 5-2. 리뷰 판단 및 대응
+### 6-2. 리뷰 판단 및 대응
 
 | 판단 | 대응 |
 |------|------|
