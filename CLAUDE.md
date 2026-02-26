@@ -96,7 +96,7 @@ Linear 이슈 기반 개발 요청 시 `.claude/skills/linear-workflow/SKILL.md`
 
 ## 자동 커밋 정책
 
-커밋 시 `.claude/skills/auto-commit/SKILL.md` 규칙을 따른다.
+커밋 시 `.claude/skills/git-commit/SKILL.md` 규칙을 따른다.
 
 ## 캐시 관리 (중요)
 
