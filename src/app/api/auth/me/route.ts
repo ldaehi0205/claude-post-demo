@@ -8,25 +8,28 @@ export async function GET(request: Request) {
   const token = getTokenFromHeader(authHeader);
 
   if (!token) {
-    return NextResponse.json(
+    return errorResponse(
+      request,
       { error: '인증이 필요합니다.', code: 'authorization' },
-      { status: 401 },
+      401,
     );
   }
 
   const { payload, expired } = verifyToken(token);
 
   if (expired) {
-    return NextResponse.json(
+    return errorResponse(
+      request,
       { error: '토큰이 만료되었습니다.', code: 'expired_token' },
-      { status: 401 },
+      401,
     );
   }
 
   if (!payload) {
-    return NextResponse.json(
+    return errorResponse(
+      request,
       { error: '유효하지 않은 토큰입니다.', code: 'invalid_token' },
-      { status: 401 },
+      401,
     );
   }
 
@@ -41,9 +44,10 @@ export async function GET(request: Request) {
   });
 
   if (!user) {
-    return NextResponse.json(
+    return errorResponse(
+      request,
       { error: '사용자를 찾을 수 없습니다.', code: 'not_found' },
-      { status: 404 },
+      404,
     );
   }
 
