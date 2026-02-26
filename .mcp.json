@@ -36,8 +36,7 @@
       "args": ["-y", "@tacticlaunch/mcp-linear"],
       "env": {
         "LINEAR_API_KEY": "${LINEAR_API_KEY}"
-      },
-      "disabled": true
+      }
     },
     "n8n": {
       "type": "stdio",
