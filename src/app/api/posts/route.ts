@@ -5,6 +5,7 @@ import { CreatePostInput } from '@/types/post';
 import { notifyNewPost } from '@/utils/n8n';
 import { getBaseUrl } from '@/utils/url';
 import { upsertTagsForPost } from '@/utils/tagService';
+import { errorResponse } from '@/utils/apiError';
 
 interface DeletePostsInput {
   ids: number[];
