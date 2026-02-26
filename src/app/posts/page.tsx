@@ -4,6 +4,8 @@ import { PostListSkeleton } from './_components/PostListSkeleton';
 import { TagSidebar } from './_components/TagSidebar';
 import { prisma } from '@/data/prisma';
 
+const SKELETON_TAG_COUNT = 3;
+
 interface PostsPageProps {
   searchParams: { tag?: string };
 }
@@ -45,7 +47,7 @@ export default function PostsPage({ searchParams }: PostsPageProps) {
             <div className="bg-white rounded-lg shadow p-4">
               <div className="h-6 bg-gray-100 rounded animate-pulse mb-4" />
               <div className="space-y-2">
-                {[1, 2, 3].map((i) => (
+                {Array.from({ length: SKELETON_TAG_COUNT }, (_, i) => (
                   <div key={i} className="h-8 bg-gray-100 rounded animate-pulse" />
                 ))}
               </div>
