@@ -109,7 +109,7 @@ mutation {
 git checkout -b feat/LDH-10-add-search
 ```
 
-## Step 3: 구현 & 커밋
+## Step 4: 구현 & 커밋
 
 - **TDD 규칙**: `.claude/skills/tdd-workflow/SKILL.md` 참조
 - **코드 검증**: `.claude/skills/review-code/SKILL.md` 참조
