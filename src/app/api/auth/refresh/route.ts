@@ -15,9 +15,10 @@ export async function POST(request: Request) {
   const refreshToken = cookieStore.get('refreshToken')?.value;
 
   if (!refreshToken) {
-    return NextResponse.json(
+    return errorResponse(
+      request,
       { error: 'Refresh Token이 없습니다.', code: 'authorization' },
-      { status: 401 },
+      401,
     );
   }
 
@@ -28,33 +29,37 @@ export async function POST(request: Request) {
   });
 
   if (!storedToken) {
-    return NextResponse.json(
+    return errorResponse(
+      request,
       { error: '유효하지 않은 Refresh Token입니다.', code: 'invalid_token' },
-      { status: 401 },
+      401,
     );
   }
 
   // Revoked 체크
   if (storedToken.revoked) {
-    return NextResponse.json(
+    return errorResponse(
+      request,
       { error: '유효하지 않은 Refresh Token입니다.', code: 'invalid_token' },
-      { status: 401 },
+      401,
     );
   }
 
   // Absolute timeout (30일) 체크
   if (storedToken.expiresAt < new Date()) {
-    return NextResponse.json(
+    return errorResponse(
+      request,
       { error: 'Refresh Token이 만료되었습니다.', code: 'expired_token' },
-      { status: 401 },
+      401,
     );
   }
 
   // Idle timeout (14일) 체크
   if (isIdleTimeoutExpired(storedToken.lastSeenAt)) {
-    return NextResponse.json(
+    return errorResponse(
+      request,
       { error: 'Refresh Token이 만료되었습니다.', code: 'expired_token' },
-      { status: 401 },
+      401,
     );
   }
 
