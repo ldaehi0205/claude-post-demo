@@ -8,6 +8,7 @@ import {
   REFRESH_TOKEN_ABSOLUTE_DAYS,
 } from '@/utils/jwt';
 import { RegisterInput } from '@/types/auth';
+import { errorResponse } from '@/utils/apiError';
 
 export async function POST(request: Request) {
   const body: RegisterInput = await request.json();
