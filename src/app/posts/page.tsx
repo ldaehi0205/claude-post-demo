@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import { PostList } from './_components/PostList';
+import { PostListSkeleton } from './_components/PostListSkeleton';
 import { TagSidebar } from './_components/TagSidebar';
 import { prisma } from '@/data/prisma';
 
@@ -7,9 +8,7 @@ interface PostsPageProps {
   searchParams: { tag?: string };
 }
 
-export default async function PostsPage({ searchParams }: PostsPageProps) {
-  const tagFilter = searchParams.tag;
-
+async function PostListLoader({ tagFilter }: { tagFilter?: string }) {
   const where = tagFilter
     ? { postTags: { some: { tag: { name: tagFilter } } } }
     : undefined;
@@ -31,6 +30,12 @@ export default async function PostsPage({ searchParams }: PostsPageProps) {
     },
     orderBy: { createdAt: 'desc' },
   });
+
+  return <PostList posts={posts} />;
+}
+
+export default function PostsPage({ searchParams }: PostsPageProps) {
+  const tagFilter = searchParams.tag;
 
   return (
     <div className="flex gap-6">
@@ -58,7 +63,9 @@ export default async function PostsPage({ searchParams }: PostsPageProps) {
             </span>
           </div>
         )}
-        <PostList posts={posts} />
+        <Suspense fallback={<PostListSkeleton />}>
+          <PostListLoader tagFilter={tagFilter} />
+        </Suspense>
       </div>
     </div>
   );
