@@ -183,7 +183,7 @@ gh api repos/{owner}/{repo}/pulls/{pr_number}/comments/{comment_id}/replies \
 - **반영**: 버그, 성능 이슈, 보안 취약점, 코드 스타일 위반, 더 나은 구현 제안
 - **논의**: 취향 차이, 기존 패턴과 충돌, 과도한 추상화 요구, 요구사항 범위 밖
 
-## Step 6: 완료 처리
+## Step 7: 완료 처리
 
 PR merge 후 Linear 이슈 상태를 "Done"으로 변경한다.
 
