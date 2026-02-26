@@ -29,9 +29,10 @@ export async function GET(request: Request, { params }: Params) {
   });
 
   if (!post) {
-    return NextResponse.json(
+    return errorResponse(
+      request,
       { error: '게시글을 찾을 수 없습니다.', code: 'not_found' },
-      { status: 404 },
+      404,
     );
   }
 
