@@ -96,18 +96,7 @@ Linear 이슈 기반 개발 요청 시 `.claude/skills/linear-workflow/SKILL.md`
 
 ## 자동 커밋 정책
 
-- 변경 사항이 있을 때만 commit, 모든 테스트 통과 시에만 commit
-- push는 사용자가 명시적으로 요청할 때만 수행
-- **Tidy First**: 구조적 변경(`refactor`)과 행위적 변경(`feat`/`fix`)은 별도 커밋으로 분리
-- 커밋 메시지는 **한국어**로 작성: `<타입>: <제목>` + 본문(변경 사항 목록) + 영향 범위
-- 타입:
-  - `feat`: 새로운 기능 추가
-  - `fix`: 버그 수정
-  - `refactor`: 코드 리팩터링 (기능 변경 없음)
-  - `style`: 코드 포맷팅, 세미콜론 누락 등
-  - `docs`: 문서 수정
-  - `test`: 테스트 코드 추가/수정
-  - `chore`: 빌드 설정, 패키지 매니저 설정 등
+커밋 시 `.claude/skills/auto-commit/SKILL.md` 규칙을 따른다.
 
 ## 캐시 관리 (중요)
 
