@@ -113,8 +113,7 @@ git checkout -b feat/LDH-10-add-search
 
 - **TDD 규칙**: `.claude/skills/tdd-workflow/SKILL.md` 참조
 - **코드 검증**: `.claude/skills/review-code/SKILL.md` 참조
-- **Tidy First**: 구조적 변경(`refactor`)과 행위적 변경(`feat`/`fix`)은 별도 커밋
-- **커밋 메시지**: 한국어, `<타입>: <제목>` 형식
+- **커밋 정책**: `.claude/skills/git-commit/SKILL.md` 참조 (메시지 형식, Tidy First 분리, 커밋 타입)
 
 ## Step 5: PR 생성
 
