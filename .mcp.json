@@ -43,6 +43,12 @@
       "command": "npx",
       "args": ["-y", "n8n-mcp"],
       "disabled": true
+    },
+    "serena": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server", "--context", "ide-assistant", "--project", "/Users/leedaehee/Applications/post-demo"],
+      "disabled": true
     }
   }
 }
