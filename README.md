@@ -77,15 +77,15 @@ GH_TOKEN="your-github-personal-access-token"
 
 이 프로젝트는 Claude Code와 연동되는 MCP 서버들을 사용합니다. `.mcp.json`에 설정되어 있습니다.
 
-| MCP 서버       | 패키지                                    | 용도                         |
-| -------------- | ----------------------------------------- | ---------------------------- |
-| **playwright** | `@anthropic-ai/mcp-server-playwright`     | 브라우저 E2E 테스트 자동화   |
-| **git**        | `@modelcontextprotocol/server-git`        | Git 저장소 조작              |
-| **filesystem** | `@modelcontextprotocol/server-filesystem` | 파일 시스템 접근             |
-| **context7**   | `@upstash/context7-mcp`                   | 라이브러리 문서 검색         |
-| **figma**      | `figma-developer-mcp`                     | Figma 디자인 파일 연동       |
-| **linear**     | `@tacticlaunch/mcp-linear`                | Linear 이슈 관리 연동        |
-| **n8n**        | `n8n-mcp`                                 | n8n 워크플로우 노드 문서접근 |
+| MCP 서버       | 패키지                                    | 용도                         | 상태     |
+| -------------- | ----------------------------------------- | ---------------------------- | -------- |
+| **playwright** | `@anthropic-ai/mcp-server-playwright`     | 브라우저 E2E 테스트 자동화   | 활성     |
+| **git**        | `@modelcontextprotocol/server-git`        | Git 저장소 조작              | 활성     |
+| **context7**   | `@upstash/context7-mcp`                   | 라이브러리 문서 검색         | 활성     |
+| **linear**     | `@tacticlaunch/mcp-linear`                | Linear 이슈 관리 연동        | 활성     |
+| **figma**      | `figma-developer-mcp`                     | Figma 디자인 파일 연동       | disabled |
+| **n8n**        | `n8n-mcp`                                 | n8n 워크플로우 노드 문서접근 | disabled |
+| **serena**     | `serena` (uvx)                            | 코드 심볼 분석/편집          | disabled |
 
 ## n8n 자동화
 
