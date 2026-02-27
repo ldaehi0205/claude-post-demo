@@ -65,7 +65,7 @@ export default function PostsPage({ searchParams }: PostsPageProps) {
             </span>
           </div>
         )}
-        <Suspense fallback={<PostListSkeleton />}>
+        <Suspense key={tagFilter ?? '__all'} fallback={<PostListSkeleton />}>
           <PostListLoader tagFilter={tagFilter} />
         </Suspense>
       </div>
