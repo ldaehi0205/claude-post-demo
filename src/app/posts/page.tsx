@@ -1,15 +1,16 @@
 import { Suspense } from 'react';
 import { PostList } from './_components/PostList';
+import { PostListSkeleton } from './_components/PostListSkeleton';
 import { TagSidebar } from './_components/TagSidebar';
 import { prisma } from '@/data/prisma';
+
+const SKELETON_TAG_COUNT = 3;
 
 interface PostsPageProps {
   searchParams: { tag?: string };
 }
 
-export default async function PostsPage({ searchParams }: PostsPageProps) {
-  const tagFilter = searchParams.tag;
-
+async function PostListLoader({ tagFilter }: { tagFilter?: string }) {
   const where = tagFilter
     ? { postTags: { some: { tag: { name: tagFilter } } } }
     : undefined;
@@ -32,6 +33,12 @@ export default async function PostsPage({ searchParams }: PostsPageProps) {
     orderBy: { createdAt: 'desc' },
   });
 
+  return <PostList posts={posts} />;
+}
+
+export default function PostsPage({ searchParams }: PostsPageProps) {
+  const tagFilter = searchParams.tag;
+
   return (
     <div className="flex gap-6">
       <aside className="w-56 flex-shrink-0">
@@ -40,7 +47,7 @@ export default async function PostsPage({ searchParams }: PostsPageProps) {
             <div className="bg-white rounded-lg shadow p-4">
               <div className="h-6 bg-gray-100 rounded animate-pulse mb-4" />
               <div className="space-y-2">
-                {[1, 2, 3].map((i) => (
+                {Array.from({ length: SKELETON_TAG_COUNT }, (_, i) => (
                   <div key={i} className="h-8 bg-gray-100 rounded animate-pulse" />
                 ))}
               </div>
@@ -58,7 +65,9 @@ export default async function PostsPage({ searchParams }: PostsPageProps) {
             </span>
           </div>
         )}
-        <PostList posts={posts} />
+        <Suspense fallback={<PostListSkeleton />}>
+          <PostListLoader tagFilter={tagFilter} />
+        </Suspense>
       </div>
     </div>
   );
