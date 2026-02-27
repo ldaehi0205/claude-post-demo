@@ -17,5 +17,8 @@ playwright-report
 test-results
 /screenshots
 
+# claude logs
+.claude/logs/
+
 # unrelated projects
 apps/
