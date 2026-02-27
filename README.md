@@ -46,13 +46,16 @@ npm run dev
 `.env` 파일을 생성하고 아래 내용을 설정하세요:
 
 ```env
-# DB
-DATABASE_URL="postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres"
-
 # 인증
 JWT_SECRET="your-jwt-secret-key"
 
-# Supabase
+# Supabase DB (Connection Pooling - 일반 쿼리용)
+DATABASE_URL="postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-1-ap-southeast-2.pooler.supabase.com:6543/postgres?pgbouncer=true"
+
+# Supabase DB (Direct - 마이그레이션용)
+DIRECT_URL="postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-1-ap-southeast-2.pooler.supabase.com:5432/postgres"
+
+# Supabase Storage
 NEXT_PUBLIC_SUPABASE_URL="https://[PROJECT-REF].supabase.co"
 NEXT_PUBLIC_SUPABASE_ANON_KEY="your-supabase-anon-key"
 SUPABASE_SERVICE_ROLE_KEY="your-supabase-service-role-key"
@@ -66,6 +69,8 @@ NEXT_PUBLIC_BASE_URL=""         # 사이트 기본 URL (로컬: ngrok URL / 배�
 # 외부 도구 (선택)
 LINEAR_API_KEY="your-linear-api-key"
 FIGMA_ACCESS_TOKEN="your-figma-access-token"
+ANTHROPIC_API_KEY="your-anthropic-api-key"
+GH_TOKEN="your-github-personal-access-token"
 ```
 
 ## MCP
