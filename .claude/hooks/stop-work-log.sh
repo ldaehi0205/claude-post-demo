@@ -18,6 +18,16 @@ TRANSCRIPT_PATH=$(echo "$HOOK_INPUT" | jq -r '.transcript_path // ""')
 LAST_ASSISTANT_MSG=$(echo "$HOOK_INPUT" | jq -r '.last_assistant_message // ""')
 PROJECT_DIR=$(echo "$HOOK_INPUT" | jq -r '.cwd // "."')
 
+# --- 로그 디렉토리 (디버그용으로 먼저 생성) ---
+LOG_DIR="$PROJECT_DIR/.claude/logs"
+mkdir -p "$LOG_DIR"
+
+# --- 디버그 모드: CLAUDE_HOOK_DEBUG=1 로 실행 시 디버그 로그 기록 ---
+if [ "${CLAUDE_HOOK_DEBUG:-0}" = "1" ]; then
+  exec 2>>"$LOG_DIR/hook-debug.log"
+  set -x
+fi
+
 # --- 무한루프 방지 ---
 if [ "$STOP_HOOK_ACTIVE" = "true" ]; then
   exit 0
@@ -28,20 +38,34 @@ if [ -z "$TRANSCRIPT_PATH" ] || [ ! -f "$TRANSCRIPT_PATH" ]; then
   exit 0
 fi
 
-# --- 사용자 프롬프트 추출 (마지막 user 메시지) ---
+# --- 사용자 프롬프트 추출 (첫 번째 + 최근 3개 user 메시지) ---
+JQ_EXTRACT='
+    [.message.content[]
+     | select(.type == "text")
+     | .text
+     | select(startswith("<ide_opened_file>") | not)
+     | select(startswith("<system-reminder>") | not)
+     | select(startswith("<ide_") | not)
+    ] | last // ""
+  '
+
+# 첫 번째 user 메시지 (세션의 원래 의도)
+FIRST_PROMPT=$(grep '"type":"user"' "$TRANSCRIPT_PATH" \
+  | head -1 \
+  | jq -r "$JQ_EXTRACT" 2>/dev/null || echo "")
+
+# 최근 3개 user 메시지
+RECENT_PROMPTS=$(grep '"type":"user"' "$TRANSCRIPT_PATH" \
+  | tail -3 \
+  | jq -r "$JQ_EXTRACT" 2>/dev/null \
+  | paste -sd ' ' || echo "")
+
+# 로그에 기록할 프롬프트 (마지막 user 메시지)
 USER_PROMPT=$(grep '"type":"user"' "$TRANSCRIPT_PATH" \
   | tail -1 \
-  | jq -r '
-      [.message.content[]
-       | select(.type == "text")
-       | .text
-       | select(startswith("<ide_opened_file>") | not)
-       | select(startswith("<system-reminder>") | not)
-       | select(startswith("<ide_") | not)
-      ] | last // ""
-    ' 2>/dev/null || echo "")
+  | jq -r "$JQ_EXTRACT" 2>/dev/null || echo "")
 
-if [ -z "$USER_PROMPT" ]; then
+if [ -z "$FIRST_PROMPT" ] && [ -z "$RECENT_PROMPTS" ]; then
   exit 0
 fi
 
@@ -49,9 +73,9 @@ fi
 USER_PROMPT=$(echo "$USER_PROMPT" | cut -c1-500)
 ASSISTANT_SUMMARY=$(echo "$LAST_ASSISTANT_MSG" | cut -c1-500)
 
-# --- feat/fix/refactor 판별 ---
+# --- feat/fix/refactor 판별 (첫 번째 + 최근 메시지 + 응답 모두 검사) ---
 WORK_TYPE=""
-COMBINED_TEXT="$USER_PROMPT $ASSISTANT_SUMMARY"
+COMBINED_TEXT="$FIRST_PROMPT $RECENT_PROMPTS $ASSISTANT_SUMMARY"
 
 if echo "$COMBINED_TEXT" | grep -qiE '추가|구현|만들|생성|개발|feat|기능|새로운|add|implement|create'; then
   WORK_TYPE="feat"
@@ -71,10 +95,6 @@ GIT_BRANCH=$(cd "$PROJECT_DIR" && git branch --show-current 2>/dev/null || echo 
 
 # --- 타임스탬프 ---
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-
-# --- 로그 디렉토리 생성 ---
-LOG_DIR="$PROJECT_DIR/.claude/logs"
-mkdir -p "$LOG_DIR"
 
 LOG_FILE="$LOG_DIR/work-log.jsonl"
 
