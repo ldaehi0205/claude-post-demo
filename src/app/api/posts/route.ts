@@ -14,35 +14,51 @@ interface DeletePostsInput {
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const tag = searchParams.get('tag');
+  const page = Math.max(1, parseInt(searchParams.get('page') ?? '1', 10));
+  const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') ?? '20', 10)));
 
   const where = tag
     ? { postTags: { some: { tag: { name: tag } } } }
     : undefined;
 
-  const posts = await prisma.post.findMany({
-    where,
-    orderBy: { createdAt: 'desc' },
-    include: {
-      author: {
-        select: {
-          id: true,
-          name: true,
-          userID: true,
-        },
-      },
-      _count: {
-        select: {
-          comments: true,
-        },
-      },
-      postTags: {
-        include: {
-          tag: { select: { id: true, name: true } },
-        },
+  const include = {
+    author: {
+      select: {
+        id: true,
+        name: true,
+        userID: true,
       },
     },
+    _count: {
+      select: {
+        comments: true,
+      },
+    },
+    postTags: {
+      include: {
+        tag: { select: { id: true, name: true } },
+      },
+    },
+  };
+
+  const [total, items] = await prisma.$transaction([
+    prisma.post.count({ where }),
+    prisma.post.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      skip: (page - 1) * limit,
+      take: limit,
+      include,
+    }),
+  ]);
+
+  return NextResponse.json({
+    items,
+    hasNext: page * limit < total,
+    total,
+    page,
+    limit,
   });
-  return NextResponse.json(posts);
 }
 
 export async function POST(request: Request) {

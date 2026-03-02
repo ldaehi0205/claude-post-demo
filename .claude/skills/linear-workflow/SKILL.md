@@ -40,7 +40,13 @@ Linear GraphQL API로 이슈를 조회한다.
 ```graphql
 query {
   issue(id: "LDH-10") {
-    id title description priority state { name }
+    id
+    title
+    description
+    priority
+    state {
+      name
+    }
   }
 }
 ```
@@ -57,7 +63,7 @@ Step 1에서 조회한 이슈를 분석하여 개발 착수 전에 사용자 확
 조회된 이슈 정보를 바탕으로 다음을 판단하여 사용자에게 보고한다:
 
 - **개발 가능 여부**: 요구사항이 명확하여 바로 개발 착수 가능한가
-- **구현 방향**: 어떤 방식으로 구현할 것인지 간단한 방향
+- **구현 방향**: 어떤 방식으로 구현할 것인지 간단한 방향을 제안후 확인 받는다.
 - **추가 정보 필요 여부**: 불명확한 부분이 있다면 어떤 정보가 더 필요한지
 
 ### 2-2. 사용자 확인
@@ -73,12 +79,17 @@ Step 1에서 조회한 이슈를 분석하여 개발 착수 전에 사용자 확
 
 ```graphql
 mutation {
-  commentCreate(input: {
-    issueId: "<issue-uuid>"
-    body: "## 🚀 개발 착수 분석\n- **구현 방향**: <간단한 구현 방향>\n- **판단**: 개발 착수 가능"
-  }) {
+  commentCreate(
+    input: {
+      issueId: "<issue-uuid>"
+      body: "## 🚀 개발 착수 분석\n- **구현 방향**: <간단한 구현 방향>\n- **판단**: 개발 착수 가능"
+    }
+  ) {
     success
-    comment { id body }
+    comment {
+      id
+      body
+    }
   }
 }
 ```
@@ -94,14 +105,14 @@ mutation {
 <타입>/LDH-<번호>-<영문설명>
 ```
 
-| 타입 | 용도 |
-|------|------|
-| `feat` | 새 기능 |
-| `fix` | 버그 수정 |
-| `refactor` | 리팩터링 |
-| `docs` | 문서 |
-| `test` | 테스트 |
-| `chore` | 설정/빌드 |
+| 타입       | 용도      |
+| ---------- | --------- |
+| `feat`     | 새 기능   |
+| `fix`      | 버그 수정 |
+| `refactor` | 리팩터링  |
+| `docs`     | 문서      |
+| `test`     | 테스트    |
+| `chore`    | 설정/빌드 |
 
 **예시**: `feat/LDH-10-add-search`, `fix/LDH-12-login-redirect`
 
@@ -136,6 +147,7 @@ EOF
 ```
 
 **규칙:**
+
 - PR 본문에 Linear 이슈 번호와 제목을 포함
 - 테스트 계획을 체크리스트로 명시
 
@@ -155,12 +167,13 @@ gh api repos/{owner}/{repo}/pulls/{pr_number}/comments
 
 ### 6-2. 리뷰 판단 및 대응
 
-| 판단 | 대응 |
-|------|------|
+| 판단            | 대응                                                 |
+| --------------- | ---------------------------------------------------- |
 | **타당한 리뷰** | 코드 수정 → 커밋 → push → 리뷰에 "반영했습니다" 답글 |
-| **논의 필요** | 리뷰 댓글에 근거를 들어 의견을 남김 |
+| **논의 필요**   | 리뷰 댓글에 근거를 들어 의견을 남김                  |
 
 **타당한 리뷰 반영:**
+
 ```bash
 # 코드 수정 후
 git add <files> && git commit -m "fix: PR 리뷰 반영 - <내용>"
@@ -172,6 +185,7 @@ gh api repos/{owner}/{repo}/pulls/{pr_number}/comments/{comment_id}/replies \
 ```
 
 **논의가 필요한 경우:**
+
 ```bash
 gh api repos/{owner}/{repo}/pulls/{pr_number}/comments/{comment_id}/replies \
   -f body="<의견 및 근거>"
@@ -190,7 +204,13 @@ PR merge 후 Linear 이슈 상태를 "Done"으로 변경한다.
 mutation {
   issueUpdate(id: "<issue-id>", input: { stateId: "<done-state-id>" }) {
     success
-    issue { id title state { name } }
+    issue {
+      id
+      title
+      state {
+        name
+      }
+    }
   }
 }
 ```
@@ -202,16 +222,16 @@ mutation {
 
 ## 주요 ID 정보
 
-| 항목 | ID |
-|------|-----|
-| 팀 (Ldh642) | `83a78e2f-1832-4909-bb75-f455dc974e59` |
+| 항목                 | ID                                     |
+| -------------------- | -------------------------------------- |
+| 팀 (Ldh642)          | `83a78e2f-1832-4909-bb75-f455dc974e59` |
 | 프로젝트 (post-demo) | `187af142-bb5e-459b-998f-9092c65e5dfd` |
 
 ## 사용 도구
 
-| 도구 | 용도 |
-|------|------|
-| `src/utils/linear.ts` → `linearGraphQL()` | Linear API 호출 |
-| `gh pr create` | PR 생성 |
-| `gh api` | PR 리뷰 조회/답글 |
-| `git` | 브랜치/커밋/push |
+| 도구                                      | 용도              |
+| ----------------------------------------- | ----------------- |
+| `src/utils/linear.ts` → `linearGraphQL()` | Linear API 호출   |
+| `gh pr create`                            | PR 생성           |
+| `gh api`                                  | PR 리뷰 조회/답글 |
+| `git`                                     | 브랜치/커밋/push  |

@@ -31,3 +31,11 @@ export interface UpdatePostInput {
   content?: string;
   tags?: string[];
 }
+
+export interface PaginatedPostsResponse {
+  items: Post[];
+  hasNext: boolean;
+  total: number;
+  page: number;
+  limit: number;
+}

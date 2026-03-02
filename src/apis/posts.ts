@@ -1,10 +1,18 @@
 import { api } from './client';
-import { Post, CreatePostInput, UpdatePostInput } from '@/types/post';
+import { Post, CreatePostInput, UpdatePostInput, PaginatedPostsResponse } from '@/types/post';
 
 export const postsApi = {
   getAll: async (tag?: string): Promise<Post[]> => {
     const params = tag ? `?tag=${encodeURIComponent(tag)}` : '';
     const { data } = await api.get<Post[]>(`/posts${params}`);
+    return data;
+  },
+
+  getPaginated: async (params: { page: number; limit?: number; tag?: string }): Promise<PaginatedPostsResponse> => {
+    const { page, limit = 20, tag } = params;
+    const searchParams = new URLSearchParams({ page: String(page), limit: String(limit) });
+    if (tag) searchParams.set('tag', tag);
+    const { data } = await api.get<PaginatedPostsResponse>(`/posts?${searchParams}`);
     return data;
   },
 
