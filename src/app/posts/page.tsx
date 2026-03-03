@@ -1,39 +1,11 @@
 import { Suspense } from 'react';
 import { PostList } from './_components/PostList';
-import { PostListSkeleton } from './_components/PostListSkeleton';
 import { TagSidebar } from './_components/TagSidebar';
-import { prisma } from '@/data/prisma';
 
 const SKELETON_TAG_COUNT = 3;
 
 interface PostsPageProps {
   searchParams: { tag?: string };
-}
-
-async function PostListLoader({ tagFilter }: { tagFilter?: string }) {
-  const where = tagFilter
-    ? { postTags: { some: { tag: { name: tagFilter } } } }
-    : undefined;
-
-  const posts = await prisma.post.findMany({
-    where,
-    include: {
-      author: true,
-      _count: {
-        select: {
-          comments: true,
-        },
-      },
-      postTags: {
-        include: {
-          tag: { select: { id: true, name: true } },
-        },
-      },
-    },
-    orderBy: { createdAt: 'desc' },
-  });
-
-  return <PostList posts={posts} />;
 }
 
 export default function PostsPage({ searchParams }: PostsPageProps) {
@@ -65,9 +37,7 @@ export default function PostsPage({ searchParams }: PostsPageProps) {
             </span>
           </div>
         )}
-        <Suspense key={tagFilter ?? '__all'} fallback={<PostListSkeleton />}>
-          <PostListLoader tagFilter={tagFilter} />
-        </Suspense>
+        <PostList tag={tagFilter} />
       </div>
     </div>
   );

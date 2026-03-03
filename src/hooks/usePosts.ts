@@ -1,8 +1,8 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { postsApi } from '@/apis/posts';
-import { CreatePostInput, UpdatePostInput } from '@/types/post';
+import { CreatePostInput, UpdatePostInput, PaginatedPostsResponse } from '@/types/post';
 
 /** 게시글 관련 쿼리 키 */
 const POSTS_KEY = ['posts'];
@@ -59,6 +59,18 @@ export function useUpdatePost() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: POSTS_KEY });
     },
+  });
+}
+
+/** 게시글 무한스크롤 목록 훅 */
+export function useInfinitePosts(tag?: string) {
+  return useInfiniteQuery<PaginatedPostsResponse>({
+    queryKey: [...POSTS_KEY, 'infinite', tag],
+    queryFn: ({ pageParam }) =>
+      postsApi.getPaginated({ page: pageParam as number, limit: 20, tag }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) =>
+      lastPage.hasNext ? lastPage.page + 1 : undefined,
   });
 }
 
