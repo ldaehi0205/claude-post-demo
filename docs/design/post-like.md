@@ -17,7 +17,6 @@ feature_slug: post-like
   - `src/app/posts/_components/LikeButton.tsx`
   - `src/app/posts/_components/LikeBadge.tsx`
   - `src/hooks/usePostLike.ts`
-  - `src/components/ui/Toast.tsx` (프로젝트 내 Toast 미존재 시 신규)
 
 ## 컴포넌트 트리
 
@@ -63,6 +62,7 @@ PostCard (수정 - Client Component)
       - `isLiked = false`: `text-gray-500`
   - 낙관적 업데이트 중(pending): 버튼 `opacity-70 pointer-events-none`
 - **상태/이벤트**:
+
   ```typescript
   const { mutate, isPending } = usePostLike(postId);
 
@@ -100,6 +100,7 @@ PostCard (수정 - Client Component)
 - **경로**: `src/hooks/usePostLike.ts`
 - **타입**: Client Hook
 - **시그니처**:
+
   ```typescript
   interface LikeMutationContext {
     previousLikeCount: number;
@@ -109,8 +110,9 @@ PostCard (수정 - Client Component)
   function usePostLike(postId: number): {
     mutate: (currentState: { isLiked: boolean; likeCount: number }) => void;
     isPending: boolean;
-  }
+  };
   ```
+
 - **동작**:
   - `useMutation` 사용
   - `onMutate`: TanStack Query 캐시에서 현재 `post` 데이터를 가져와 낙관적으로 `isLiked`, `likeCount` 반전
@@ -149,6 +151,7 @@ PostCard (수정 - Client Component)
     <LikeBadge likeCount={post._count?.likes ?? 0} />
   </td>
   ```
+
   - `Post` 타입에 `_count.likes` 필드 추가 필요
 
 ---
