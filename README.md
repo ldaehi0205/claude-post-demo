@@ -2,6 +2,47 @@
 
 해당 프로젝트는 Claude AI를 활용하여 간단한 게시판 자동화 코드 생성을 위한 워크플로우를 설계하고 검증하는 리포지토리입니다.
 
+## 배포
+
+**[https://claude-post-demo.vercel.app/posts](https://claude-post-demo.vercel.app/posts)**
+
+## 개발 워크플로우
+
+### 워크플로우 1: Linear 이슈 기반 개발
+
+```
+Linear 이슈 확인 → 브랜치 생성 → TDD 구현 → PR → 리뷰 반영
+```
+
+| 단계 | 도구 | 설명 |
+|------|------|------|
+| 이슈 확인 | Linear MCP | 작업할 이슈 조회 및 In Progress 전환 |
+| 브랜치 생성 | git | `<type>/LDH-<번호>-<설명>` 형식 |
+| TDD 구현 | `/tdd-workflow` | Red → Green → Refactor 사이클 |
+| PR 생성 | GitHub | main 브랜치로 PR |
+| 리뷰 반영 | Linear MCP | 리뷰 코멘트 반영 후 이슈 Done |
+
+상세 규칙: `.claude/skills/linear-workflow/SKILL.md`, `.claude/skills/tdd-workflow/SKILL.md`
+
+---
+
+### 워크플로우 2: AI Agent 파이프라인
+
+```
+product-strategist → design-agent → dev-design-agent → tdd-workflow
+```
+
+| 에이전트 | 역할 | 산출물 |
+|---------|------|--------|
+| `product-strategist` | 현재 서비스 분석 → 고도화 아이디어 도출 | `docs/ideas/YYYY-MM-DD-<slug>.md` |
+| `design-agent` | 아이디어 기반 UI/UX 설계 | `docs/design/<slug>.md` |
+| `dev-design-agent` | UI 설계 기반 기술 구현 계획 (API, DB, 테스트) | `docs/dev-design/<slug>.md` |
+| `tdd-workflow` | 구현 계획 기반 TDD 개발 | 코드 + 테스트 |
+
+각 에이전트는 이전 단계 산출물을 입력으로 받아 다음 단계로 이어집니다.
+
+---
+
 ## Claude AI 개발
 
 이 프로젝트는 Claude Code를 활용한 AI 기반 개발을 지원합니다.
@@ -34,12 +75,14 @@ npm run dev
 
 ## 스크립트
 
-| 명령어          | 설명               |
-| --------------- | ------------------ |
-| `npm run dev`   | 개발 서버 실행     |
-| `npm run build` | 프로덕션 빌드      |
-| `npm run start` | 프로덕션 서버 실행 |
-| `npm run lint`  | ESLint 검사        |
+| 명령어             | 설명               |
+| ------------------ | ------------------ |
+| `npm run dev`      | 개발 서버 실행     |
+| `npm run build`    | 프로덕션 빌드      |
+| `npm run start`    | 프로덕션 서버 실행 |
+| `npm run lint`     | ESLint 검사        |
+| `npm run test`     | 유닛 테스트        |
+| `npm run test:e2e` | E2E 테스트         |
 
 ## 환경 변수
 
