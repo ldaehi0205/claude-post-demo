@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { usePost, usePostSummary, useDeletePost } from '@/hooks/usePosts';
 import { useAuth } from '@/hooks/useAuth';
 import { CommentSection } from './comments/CommentSection';
+import { LikeButton } from './LikeButton';
 
 const MarkdownPreview = dynamic(() => import('@/components/ui/MarkdownPreview'), {
   ssr: false,
