@@ -72,6 +72,14 @@ export function PostDetail({ id }: PostDetailProps) {
         </div>
       )}
       <MarkdownPreview content={post.content} className="prose prose-lg max-w-none mb-8" />
+      <div className="mb-6">
+        <LikeButton
+          postId={id}
+          likeCount={post.likeCount ?? 0}
+          isLiked={post.isLiked ?? false}
+          isLoggedIn={!!user}
+        />
+      </div>
       <div className="flex gap-2">
         {isAuthor && (
           <>
