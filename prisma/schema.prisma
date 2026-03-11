@@ -17,6 +17,7 @@ model User {
   posts         Post[]
   refreshTokens RefreshToken[]
   comments      Comment[]
+  likes         PostLike[]
 }
 
 model Post {
