@@ -51,7 +51,7 @@ You are a Senior Full-Stack Engineer and Software Architect with expertise in Ne
 - 순서대로 나열된 구현 단계
 
 ### 4. 문서 저장
-계획을 `docs/dev-design/<feature-slug>.md`에 저장합니다.
+계획을 `docs/tech-spec/<feature-slug>.md`에 저장합니다.
 
 ## 출력 문서 스키마
 
