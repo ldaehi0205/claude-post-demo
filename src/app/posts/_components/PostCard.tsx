@@ -73,6 +73,9 @@ export function PostCard({ post, ids, selectPost }: PostCardProps) {
       <td className="py-3 px-2 text-center text-sm text-gray-400 whitespace-nowrap">
         {post._count?.comments ?? 0}
       </td>
+      <td className="py-3 px-2 text-center text-sm whitespace-nowrap">
+        <LikeBadge likeCount={post._count?.likes ?? 0} />
+      </td>
     </tr>
   );
 }
