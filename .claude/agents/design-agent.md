@@ -119,4 +119,4 @@ feature_slug: <kebab-case>
 설계 문서 저장 후 사용자에게 다음을 안내합니다:
 - 저장된 파일 경로
 - 신규/수정 컴포넌트 수
-- 구현 시작을 위해 `tdd-workflow` 스킬 또는 `create-component` 스킬을 사용할 수 있음
+- 다음 단계: `dev-design-agent`를 실행하면 기술 구현 계획(파일 구조, API 설계, TDD 테스트 계획, 태스크 분해)을 이어받아 작성할 수 있음
