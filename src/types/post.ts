@@ -8,16 +8,29 @@ export interface Post {
   summary: string | null;
   imageUrl: string | null;
   viewCount: number;
+  likeCount?: number;
+  isLiked?: boolean;
   createdAt: Date;
   updatedAt: Date;
   authorId: number;
   author: User;
   _count?: {
     comments: number;
+    likes: number;
   };
   postTags?: Array<{
     tag: Tag;
   }>;
+}
+
+export interface LikeResponse {
+  likeCount: number;
+  isLiked: boolean;
+}
+
+export interface LikeMutationContext {
+  previousLikeCount: number;
+  previousIsLiked: boolean;
 }
 
 export interface CreatePostInput {
