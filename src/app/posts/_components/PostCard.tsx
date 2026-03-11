@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { Post } from '@/types/post';
+import { LikeBadge } from './LikeBadge';
 
 interface PostCardProps {
   post: Post;
