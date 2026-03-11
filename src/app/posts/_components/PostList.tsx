@@ -95,6 +95,7 @@ export function PostList({ tag }: PostListProps) {
             <th className="py-3 px-4 w-32 text-center">작성일</th>
             <th className="py-3 px-2 w-16 text-center">조회</th>
             <th className="py-3 px-2 w-16 text-center">댓글</th>
+            <th className="py-3 px-2 w-16 text-center">좋아요</th>
           </tr>
         </thead>
         <tbody>
