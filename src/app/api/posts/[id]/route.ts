@@ -10,8 +10,19 @@ interface Params {
 }
 
 export async function GET(request: Request, { params }: Params) {
+  const postId = Number(params.id);
+
+  // 선택적 인증 — 로그인 사용자면 isLiked 계산, 아니면 false
+  const authHeader = request.headers.get('Authorization');
+  const token = getTokenFromHeader(authHeader);
+  let userId: number | null = null;
+  if (token) {
+    const { payload } = verifyToken(token);
+    if (payload) userId = payload.userId;
+  }
+
   const post = await prisma.post.findUnique({
-    where: { id: Number(params.id) },
+    where: { id: postId },
     include: {
       author: {
         select: {
@@ -25,6 +36,9 @@ export async function GET(request: Request, { params }: Params) {
           tag: { select: { id: true, name: true } },
         },
       },
+      _count: {
+        select: { likes: true },
+      },
     },
   });
 
@@ -36,13 +50,24 @@ export async function GET(request: Request, { params }: Params) {
     );
   }
 
+  const isLiked = userId
+    ? !!(await prisma.postLike.findUnique({
+        where: { postId_userId: { postId, userId } },
+      }))
+    : false;
+
   // 조회수 증가 (비동기, 응답 지연 없음)
   prisma.post.update({
     where: { id: post.id },
     data: { viewCount: { increment: 1 } },
   }).catch(() => {});
 
-  return NextResponse.json({ ...post, viewCount: post.viewCount + 1 });
+  return NextResponse.json({
+    ...post,
+    viewCount: post.viewCount + 1,
+    likeCount: post._count.likes,
+    isLiked,
+  });
 }
 
 export async function PUT(request: Request, { params }: Params) {
