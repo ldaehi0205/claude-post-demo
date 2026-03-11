@@ -29,14 +29,14 @@ Linear 이슈 확인 → 브랜치 생성 → TDD 구현 → PR → 리뷰 반�
 ### 워크플로우 2: AI Agent 파이프라인
 
 ```
-product-strategist → design-agent → dev-design-agent → tdd-workflow
+product-strategist → design-agent → tech-spec-agent → tdd-workflow
 ```
 
 | 에이전트 | 역할 | 산출물 |
 |---------|------|--------|
 | `product-strategist` | 현재 서비스 분석 → 고도화 아이디어 도출 | `docs/ideas/YYYY-MM-DD-<slug>.md` |
 | `design-agent` | 아이디어 기반 UI/UX 설계 | `docs/design/<slug>.md` |
-| `dev-design-agent` | UI 설계 기반 기술 구현 계획 (API, DB, 테스트) | `docs/dev-design/<slug>.md` |
+| `tech-spec-agent` | UI 설계 기반 기술 구현 계획 (API, DB, 테스트) | `docs/tech-spec/<slug>.md` |
 | `tdd-workflow` | 구현 계획 기반 TDD 개발 | 코드 + 테스트 |
 
 각 에이전트는 이전 단계 산출물을 입력으로 받아 다음 단계로 이어집니다.
