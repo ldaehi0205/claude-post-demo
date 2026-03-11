@@ -1,5 +1,5 @@
 import { api } from './client';
-import { Post, CreatePostInput, UpdatePostInput, PaginatedPostsResponse } from '@/types/post';
+import { Post, CreatePostInput, UpdatePostInput, PaginatedPostsResponse, LikeResponse } from '@/types/post';
 
 export const postsApi = {
   getAll: async (tag?: string): Promise<Post[]> => {
